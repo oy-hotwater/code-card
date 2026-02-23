@@ -71,3 +71,5 @@ npm run dev
 - This repository is published as a portfolio for job hunting purposes.
 - Unauthorized copying, redistribution, or commercial use of the code,
 - assets, or ideas is strictly prohibited.
+
+Decision Log: docs/decision-log.md
