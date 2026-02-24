@@ -8,7 +8,7 @@ type Props = {
   onPlayCard: (cardId: CardId) => void;
 
   selectedId: CardId | null;
-  onSelectCard: (cardId: CardId | null) => void;
+  onSelectCard: (cardId: CardId) => void;
 };
 
 // ざっくり「中央に扇形」
@@ -47,9 +47,7 @@ export function Hand({
               setDragging={(v) => setDraggingId(v ? card.id : null)}
               onDropToPlayZone={() => onPlayCard(card.id)}
               selected={selectedId === card.id}
-              onClick={() =>
-                onSelectCard(selectedId === card.id ? null : card.id)
-              }
+              onHoverSelect={onSelectCard}
             />
           );
         })}
