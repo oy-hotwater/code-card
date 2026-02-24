@@ -41,6 +41,12 @@ export function useGame() {
   const [lastLog, setLastLog] = useState("Draw your hand.");
   const [draggingId, setDraggingId] = useState<CardId | null>(null);
 
+  const [selectedId, setSelectedId] = useState<CardId | null>(null);
+  const selectedCard = useMemo(
+    () => hand.find((c) => c.id === selectedId) ?? null,
+    [hand, selectedId],
+  );
+
   function playCard(cardId: CardId) {
     setHand((prev) => {
       const card = prev.find((c) => c.id === cardId);
@@ -51,7 +57,13 @@ export function useGame() {
       setPlayerHp((hp) => Math.max(0, hp + r.playerHpDelta));
       setLastLog(r.log);
 
-      return prev.filter((c) => c.id !== cardId);
+      const next = prev.filter((c) => c.id !== cardId);
+
+      if (selectedId === cardId) {
+        setSelectedId(null);
+      }
+
+      return next;
     });
   }
 
@@ -68,5 +80,9 @@ export function useGame() {
     endTurn,
     draggingId,
     setDraggingId,
+
+    selectedId,
+    setSelectedId,
+    selectedCard,
   };
 }

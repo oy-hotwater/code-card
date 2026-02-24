@@ -1,54 +1,28 @@
 import type { Card } from "./types";
 
-let seq = 1;
-const uid = () => `c_${seq++}`;
+const uid = () => `c_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 
 export function makeStarterDeck(): Card[] {
   return [
     {
       id: uid(),
-      name: "Strike",
+      name: "Attack A",
       cost: 1,
-      text: "Deal 6 damage.",
+      text: "Placeholder.",
       rarity: "common",
       kind: "attack",
       damage: 6,
+      code: "ans = 1\nprint(ans)",
     },
     {
       id: uid(),
-      name: "Strike",
+      name: "Skill A",
       cost: 1,
-      text: "Deal 6 damage.",
-      rarity: "common",
-      kind: "attack",
-      damage: 6,
-    },
-    {
-      id: uid(),
-      name: "Defend",
-      cost: 1,
-      text: "Gain 5 Block.",
+      text: "Placeholder.",
       rarity: "common",
       kind: "skill",
       block: 5,
-    },
-    {
-      id: uid(),
-      name: "Defend",
-      cost: 1,
-      text: "Gain 5 Block.",
-      rarity: "common",
-      kind: "skill",
-      block: 5,
-    },
-    {
-      id: uid(),
-      name: "Bash",
-      cost: 2,
-      text: "Deal 8 damage.",
-      rarity: "uncommon",
-      kind: "attack",
-      damage: 8,
+      code: "for i in range(3):\n  pass",
     },
   ];
 }

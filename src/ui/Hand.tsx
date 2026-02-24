@@ -6,6 +6,9 @@ type Props = {
   draggingId: CardId | null;
   setDraggingId: (id: CardId | null) => void;
   onPlayCard: (cardId: CardId) => void;
+
+  selectedId: CardId | null;
+  onSelectCard: (cardId: CardId | null) => void;
 };
 
 // ざっくり「中央に扇形」
@@ -18,7 +21,14 @@ function fanTransform(index: number, count: number) {
   return { x: dx, y: lift, rotate: rot };
 }
 
-export function Hand({ cards, draggingId, setDraggingId, onPlayCard }: Props) {
+export function Hand({
+  cards,
+  draggingId,
+  setDraggingId,
+  onPlayCard,
+  selectedId,
+  onSelectCard,
+}: Props) {
   return (
     <div className="handWrap">
       <div className="hand">
@@ -36,6 +46,10 @@ export function Hand({ cards, draggingId, setDraggingId, onPlayCard }: Props) {
               isDragging={isDragging}
               setDragging={(v) => setDraggingId(v ? card.id : null)}
               onDropToPlayZone={() => onPlayCard(card.id)}
+              selected={selectedId === card.id}
+              onClick={() =>
+                onSelectCard(selectedId === card.id ? null : card.id)
+              }
             />
           );
         })}

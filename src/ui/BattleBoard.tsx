@@ -1,11 +1,15 @@
+import type { Card } from "../game/types";
+
 type Props = {
   enemyHp: number;
   playerHp: number;
   lastLog: string;
   onEndTurn: () => void;
+
+  selectedCard: Card | null;
 };
 
-export function BattleBoard({ enemyHp, playerHp, lastLog, onEndTurn }: Props) {
+export function BattleBoard({ enemyHp, playerHp, lastLog, onEndTurn, selectedCard }: Props) {
   return (
     <div className="board">
       <div className="hud">
@@ -29,6 +33,17 @@ export function BattleBoard({ enemyHp, playerHp, lastLog, onEndTurn }: Props) {
 
       <div className="arena">
         <div className="enemyDummy">ENEMY</div>
+      </div>
+
+      <div className="codePanel">
+        <div className="codeTitle">
+          {selectedCard ? `Code: ${selectedCard.name}` : "Code"}
+        </div>
+        <pre className="codeBox">
+          <code>
+            {selectedCard?.code ?? "カードをクリックしてコードを表示"}
+          </code>
+        </pre>
       </div>
     </div>
   );

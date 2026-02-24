@@ -13,6 +13,7 @@ export default function App() {
           playerHp={game.playerHp}
           lastLog={game.lastLog}
           onEndTurn={game.endTurn}
+          selectedCard={game.selectedCard}
         />
 
         <Hand
@@ -20,6 +21,8 @@ export default function App() {
           draggingId={game.draggingId}
           setDraggingId={game.setDraggingId}
           onPlayCard={game.playCard}
+          selectedId={game.selectedId}
+          onSelectCard={game.setSelectedId}
         />
       </div>
     </div>

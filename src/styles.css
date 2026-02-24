@@ -230,3 +230,21 @@ body,
   border: 1px solid rgba(255, 255, 255, 0.1);
   text-transform: uppercase;
 }
+
+.card.selected {
+  outline: 3px solid rgba(255, 255, 255, 0.8);
+}
+
+.codePanel {
+  margin-top: 12px;
+}
+.codeTitle {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.codeBox {
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  overflow: auto;
+}

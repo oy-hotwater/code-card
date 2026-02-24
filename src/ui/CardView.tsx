@@ -10,6 +10,9 @@ type Props = {
   isDragging: boolean;
   setDragging: (v: boolean) => void;
   onDropToPlayZone: () => void;
+
+  selected: boolean;
+  onClick: () => void;
 };
 
 function rarityClass(r: Card["rarity"]) {
@@ -26,6 +29,8 @@ export function CardView({
   isDragging,
   setDragging,
   onDropToPlayZone,
+  selected,
+  onClick,
 }: Props) {
   const [hovered, setHovered] = useState(false);
 
@@ -64,7 +69,7 @@ export function CardView({
 
   return (
     <motion.div
-      className={`card ${rarityClass(card.rarity)} ${isDragging ? "dragging" : ""}`}
+      className={`card ${rarityClass(card.rarity)} ${isDragging ? "dragging" : ""} ${selected ? "selected" : ""}`}
       style={{
         x: baseX,
         y: baseY,
@@ -73,6 +78,10 @@ export function CardView({
       }}
       animate={{ y: baseY + liftY, scale }}
       transition={{ type: "spring", stiffness: 500, damping: 35 }}
+      onClick={() => {
+        if (isDragging) return;
+        onClick();
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
