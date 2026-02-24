@@ -12,7 +12,13 @@ export function makeStarterDeck(): Card[] {
       rarity: "common",
       kind: "attack",
       damage: 6,
-      code: "ans = 1\nprint(ans)",
+      code: [
+        "def Attack_A():",
+        "  attack = 1",
+        "  return attack",
+        "",
+        "Attack_A()",
+      ].join("\n"),
     },
     {
       id: uid(),
@@ -22,7 +28,13 @@ export function makeStarterDeck(): Card[] {
       rarity: "common",
       kind: "skill",
       block: 5,
-      code: "for i in range(3):\n  pass",
+      code: [
+        "def Skill_A():",
+        "  block = 5",
+        "  return block",
+        "",
+        "Skill_A()",
+      ].join("\n"),
     },
   ];
 }
