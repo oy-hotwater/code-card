@@ -12,7 +12,6 @@ export type Card = {
   damage?: number;
   block?: number;
 
-  // 追加（後回し前提）
   code?: string; // Python表示用（複数行OK）
   notes?: string; // 補足説明（任意）
 };
