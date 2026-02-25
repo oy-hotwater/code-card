@@ -1,89 +1,33 @@
 import { motion } from "framer-motion";
 
-const TrojanHorse = () => {
+const TrojanHorseIcon = ({ size = 400, color = "#000000" }) => {
   return (
-    <div style={{ display: "flex", justifyContent: "center", padding: "50px" }}>
-      <motion.svg
-        width="200"
-        height="200"
-        viewBox="0 0 100 100"
-        initial="hidden"
-        animate="visible"
-        whileHover="hover"
+    <motion.svg
+      width={size}
+      height={size}
+      viewBox="0 0 600 600"
+      xmlns="http://www.w3.org"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <g
+        transform="translate(0,600) scale(0.1,-0.1)"
+        fill={color}
+        stroke="none"
+        fillRule="evenodd" // 重なり部分を正しく「抜き」にする設定
       >
-        {/* 台車（ベース） */}
-        <motion.rect
-          x="15"
-          y="80"
-          width="70"
-          height="5"
-          fill="#5D4037"
-          variants={{
-            hidden: { scaleX: 0 },
-            visible: { scaleX: 1, transition: { duration: 0.5 } },
-          }}
-        />
+        {/* メインの巨大なパスデータ */}
+        <path d="M1640 4743 c-47 -8 -89 -18 -93 -23 -7 -6 31 -171 79 -347 5 -17 15 -23 43 -25 l38 -3 -229 -277 -229 -277 58 -153 58 -153 126 -3 126 -3 45 53 c36 42 61 60 122 86 69 29 81 31 116 22 22 -6 40 -14 40 -18 0 -4 -16 -113 -35 -242 -54 -357 -48 -498 30 -675 24 -56 21 -14 50 -772 l15 -393 -75 -150 -75 -150 370 0 370 0 5 23 c5 22 82 538 127 850 l23 157 135 0 c118 0 195 7 391 36 l45 6 13 -43 c33 -113 140 -286 230 -374 23 -21 41 -44 41 -50 0 -5 -49 -141 -110 -300 -60 -160 -110 -293 -110 -297 0 -5 92 -8 204 -8 l203 0 61 237 c34 131 69 270 78 310 17 71 17 71 41 56 22 -15 23 -20 23 -145 l0 -130 -56 -132 c-31 -72 -63 -146 -70 -164 l-14 -32 270 0 270 0 0 389 0 390 -42 48 c-102 118 -111 196 -42 371 26 64 55 144 65 177 l17 60 1 -262 1 -263 175 0 175 0 0 463 c0 527 1 521 -82 613 -79 86 -191 119 -322 94 l-66 -12 -52 47 c-69 62 -135 99 -233 132 l-80 27 -440 6 c-390 5 -446 8 -490 24 -67 24 -109 51 -141 89 l-26 31 93 31 c51 17 94 36 96 42 6 18 -46 212 -83 306 -144 375 -444 629 -827 702 -101 19 -333 18 -447 -2z m458 -99 c82 -17 228 -69 237 -85 9 -13 -77 -161 -90 -155 -5 3 -39 17 -75 32 -48 20 -73 37 -95 68 -42 57 -109 95 -189 108 -36 6 -68 9 -70 7 -2 -2 -6 -40 -8 -84 l-3 -80 -50 0 -50 0 -24 93 c-13 51 -22 95 -19 98 3 2 41 9 84 14 100 11 254 4 352 -16z" />
 
-        {/* 車輪 */}
-        {[25, 75].map((cx, i) => (
-          <motion.circle
-            key={i}
-            cx={cx}
-            cy="88"
-            r="4"
-            fill="#3E2723"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: { opacity: 1, transition: { delay: 0.5 + i * 0.2 } },
-              hover: {
-                rotate: 360,
-                transition: { repeat: Infinity, duration: 2, ease: "linear" },
-              },
-            }}
-          />
-        ))}
-
-        {/* 木馬の本体（パス描画） */}
-        <motion.path
-          d="M 25 80 L 35 45 L 30 35 L 35 15 L 50 15 L 55 30 L 75 45 L 75 80 Z"
-          fill="transparent"
-          stroke="#8D6E63"
-          strokeWidth="2"
-          variants={{
-            hidden: { pathLength: 0, fill: "rgba(141, 110, 99, 0)" },
-            visible: {
-              pathLength: 1,
-              fill: "rgba(141, 110, 99, 1)",
-              transition: {
-                pathLength: { duration: 1.5, ease: "easeInOut" },
-                fill: { delay: 1.2, duration: 0.8 },
-              },
-            },
-            hover: {
-              y: -2,
-              transition: {
-                repeat: Infinity,
-                repeatType: "mirror",
-                duration: 0.5,
-              },
-            },
-          }}
-        />
-
-        {/* 目 */}
-        <motion.circle
-          cx="42"
-          cy="22"
-          r="1.5"
-          fill="#FFF"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: { opacity: 1, transition: { delay: 2 } },
-          }}
-        />
-      </motion.svg>
-    </div>
+        {/* その他のパーツ */}
+        <path d="M1777 4134 c-4 -4 -7 -27 -7 -51 l0 -43 51 0 50 0 -3 48 -3 47 -40 3 c-23 2 -44 0 -48 -4z" />
+        <path d="M1435 3778 c-2 -7 -3 -29 -2 -48 2 -34 3 -35 50 -38 l47 -3 0 50 0 51 -45 0 c-28 0 -47 -5 -50 -12z" />
+        <path d="M3160 3160 l0 -50 50 0 50 0 0 50 0 50 -50 0 -50 0 0 -50z" />
+        <path d="M3400 3161 l0 -51 45 0 c39 0 45 3 51 24 3 13 4 35 2 47 -3 21 -9 24 -50 27 l-48 3 0 -50z" />
+      </g>
+    </motion.svg>
   );
 };
 
-export default TrojanHorse;
+export default TrojanHorseIcon;
