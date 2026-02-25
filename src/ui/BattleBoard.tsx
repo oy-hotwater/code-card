@@ -1,4 +1,5 @@
 import type { Card } from "../game/types";
+import TrojanHorseIcon from "./components/TrojanHorseIcon";
 
 type Props = {
   enemyHp: number;
@@ -9,7 +10,13 @@ type Props = {
   selectedCard: Card | null;
 };
 
-export function BattleBoard({ enemyHp, playerHp, lastLog, onEndTurn, selectedCard }: Props) {
+export function BattleBoard({
+  enemyHp,
+  playerHp,
+  lastLog,
+  onEndTurn,
+  selectedCard,
+}: Props) {
   return (
     <div className="board">
       <div className="hud">
@@ -32,7 +39,12 @@ export function BattleBoard({ enemyHp, playerHp, lastLog, onEndTurn, selectedCar
       </div>
 
       <div className="arena">
-        <div className="enemyDummy">ENEMY</div>
+        <div className="enemyWrap">
+          <div className="enemyName">TROJAN</div>
+          <div className="enemySprite">
+            <TrojanHorseIcon />
+          </div>
+        </div>
       </div>
 
       <div className="codePanel">
@@ -40,9 +52,7 @@ export function BattleBoard({ enemyHp, playerHp, lastLog, onEndTurn, selectedCar
           {selectedCard ? `Code: ${selectedCard.name}` : "Code"}
         </div>
         <pre className="codeBox">
-          <code>
-            {selectedCard?.code ?? "カードをクリックしてコードを表示"}
-          </code>
+          <code>{selectedCard?.code ?? "カードを選んでコードを表示"}</code>
         </pre>
       </div>
     </div>
