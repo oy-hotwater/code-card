@@ -1,5 +1,13 @@
 # code-card
 
+## デモ映像/ demo movies
+
+2026-02-27: Framer Motionを適応したUIへの変更結果。カードコンポーネント実装、Pythonコード実行、敵の挙動反映を実装。カードをドラッグすると、パネルでPythonコードが1行ずつハイライトされ、それに対応して敵のHPが減少する「ステップ実行」の様子。
+
+<video src="https://github.com/user-attachments/assets/928cb9a4-d42a-49d8-ae1b-5de108eaa8d4" width="320px"></video>
+
+---
+
 ## 概要 / Overview
 
 本プロジェクトは、プログラミングの処理の流れを  
@@ -9,13 +17,6 @@
 This project is a learning support application that visualizes program execution
 through **card-based interactions** and **dynamic value changes**,
 allowing beginners to intuitively understand how code works.
-
----
-
-## デモ映像/ demo movies
-
-- 2026-02-27: Framer Motionを適応したUIへの変更結果。カードコンポーネント実装、Pythonコード実行、敵の挙動反映、の実装がわかる。
-  https://github.com/user-attachments/assets/928cb9a4-d42a-49d8-ae1b-5de108eaa8d4
 
 ---
 
