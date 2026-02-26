@@ -6,6 +6,23 @@ export function makeStarterDeck(): Card[] {
   return [
     {
       id: uid(),
+      name: "attack(damage=3)",
+      cost: 1,
+      text: "Placeholder.",
+      rarity: "common",
+      kind: "attack",
+      damage: 3,
+      code: [
+        "def attack(damage=3):",
+        "  global enemy_hp, cost                  # ステータスに干渉",
+        "  cost -= 1                              # コストを消費",
+        "  enemy_hp -= damage                     # 敵にダメージ(敵のHPを減らす)",
+        "  print(f'Enemy takes {damage} damage!') # ログを表示",
+        "  return",
+      ].join("\n"),
+    },
+    {
+      id: uid(),
       name: "Attack A",
       cost: 1,
       text: "Placeholder.",
