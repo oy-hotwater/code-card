@@ -12,14 +12,22 @@ allowing beginners to intuitively understand how code works.
 
 ---
 
+## デモ画像/ demo images
+
+---
+
 ## コンセプト / Concept
 
 コードを読むだけでは把握しづらい  
 「処理がどの順番で実行され、値がどのように変化するか」を、  
 ゲーム的な体験として表現することを目指しています。
+カードをプレイすると、内部のPythonコードが1行ずつステップ実行され、
+ハイライトに合わせてゲーム内のステータス（HPやログ）が連動して変化します。
 
 Instead of reading static code, this application provides a game-like experience
 to help users understand **execution order** and **state changes** step by step.
+When a card is played, the underlying Python code is executed line by line with highlights,
+syncing the game's state (e.g., HP, logs) with the code logic.
 
 ---
 
@@ -28,18 +36,21 @@ to help users understand **execution order** and **state changes** step by step.
 - TypeScript
 - React
 - Vite
+- Framer Motion (流麗なカードアニメーションとUIインタラクションに使用)
 
 ---
 
 ## 主な特徴 / Features
 
-- 処理をカード単位で実行し、状態変化を視覚的に表示
-- 代入・条件分岐・return などの基本構文を段階的に体験可能
-- UI操作中心で、コードに不慣れでも理解しやすい設計
+- **関数のカード化 (Code-to-Card Abstraction)**: Pythonの実行単位（関数）をゲーム上の「カード」としてパッケージ化。引数や戻り値といった抽象的な概念を、カードの性能や効果として直感的に捉えることができます。
+- **ステップ実行とハイライト**: カードを使用するとコードが1行ずつ実行され、処理の流れを視覚的に追うことができます。
+- **状態変化の可視化**: 代入・演算・関数の戻り値などの基本構文が、そのままゲームのダメージや回復として画面に反映されます。
+- **直感的なUI**: ドラッグ＆ドロップによるカード操作など、コードに不慣れでも遊びながら学べる設計です。
 
-- Execute logic step by step using card-based actions
-- Visual representation of variable and state changes
-- Beginner-friendly UI focused on interaction rather than syntax
+- **Code-to-Card Abstraction**: Encapsulating Python functions into playable cards. It makes abstract concepts like arguments and return values intuitive by representing them as card attributes.
+- **Step-by-Step Execution**: Executing code line by line with visual highlights.
+- **Visual State Changes**: Basic syntax like assignment, arithmetic, and return values are directly reflected as game actions (e.g., dealing damage).
+- **Intuitive UI**: Drag-and-drop card interactions make learning to code feel like playing a game.
 
 ---
 
@@ -72,4 +83,10 @@ npm run dev
 - Unauthorized copying, redistribution, or commercial use of the code,
 - assets, or ideas is strictly prohibited.
 
-Decision Log: docs/decision-log.md
+---
+
+## 開発記録 / Developer Notes
+
+設計の変遷や意思決定のプロセスについては、以下のログを参照してください。
+
+- [Decision Log](docs/decision-log.md)
