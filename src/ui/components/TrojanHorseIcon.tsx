@@ -1,70 +1,69 @@
-import { motion } from "framer-motion";
-import type { Variants } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 export type TrojanHorseState = "enter" | "idle" | "attack" | "damage" | "exit";
 
 type Props = {
   state?: TrojanHorseState;
   size?: number;
-  color?: string;
   onAnimationComplete?: (state: TrojanHorseState) => void;
 };
 
-// 状態ごとのアニメーション定義
+// 状態ごとのアニメーション定義（サイバーパンク風の光と動き）
 const horseVariants: Variants = {
   enter: {
-    x: 150,
+    x: 200,
     opacity: 0,
     scale: 0.8,
+    transition: { type: "spring", stiffness: 200, damping: 20 },
   },
   idle: {
     x: 0,
-    y: [0, -8, 0], // 上下にゆっくり呼吸するように動く
-    rotate: [0, -2, 0, 2, 0], // 前後にゆらゆら揺れる
+    y: [0, -6, 0], // ホバーエンジンのような浮遊感
+    rotate: [0, -1, 0, 1, 0],
     opacity: 1,
     scale: 1,
-    // CSSのドロップシャドウを維持しつつ明るさを標準に
-    filter: "brightness(1) drop-shadow(0px 10px 18px rgba(0,0,0,0.35))",
+    // シアンブルーのネオンシャドウ
+    filter: "drop-shadow(0px 15px 25px rgba(0, 243, 255, 0.2)) brightness(1)",
     transition: {
-      y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+      y: { duration: 2, repeat: Infinity, ease: "easeInOut" },
       rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-      // 他のアクション（攻撃など）からidleに戻る時の動き
       x: { type: "spring", stiffness: 300, damping: 25 },
-      opacity: { duration: 0.4 },
-      scale: { duration: 0.4 },
     },
   },
   attack: {
-    // 後ろに少し引いてから、左(プレイヤー側)へ大きく突進する
-    x: [0, 40, -150, 0],
-    rotate: [0, 8, -15, 0],
+    x: [0, 50, -180, 0], // チャージしてからの高速突進
+    y: [0, -10, 5, 0],
+    rotate: [0, 12, -8, 0],
     scale: [1, 0.95, 1.15, 1],
     transition: {
       duration: 0.7,
-      times: [0, 0.3, 0.7, 1], // アニメーションの変化タイミング
-      ease: "easeInOut",
+      times: [0, 0.3, 0.7, 1],
+      ease: "anticipate", // よりメカニカルで鋭い動き
     },
   },
   damage: {
-    // ビクッと後ろに下がりながら激しく振動する
-    x: [0, 15, -10, 15, -5, 0],
-    rotate: [0, 5, -5, 3, -2, 0],
-    // 赤くフラッシュさせる
+    // グリッチ風に細かく激しくブレる
+    x: [0, 15, -15, 10, -10, 5, 0],
+    y: [0, -5, 5, -5, 5, 0],
+    rotate: [0, 3, -4, 5, -2, 0],
     filter: [
-      "brightness(1) drop-shadow(0px 10px 18px rgba(0,0,0,0.35))",
-      "brightness(1.5) drop-shadow(0px 0px 30px rgba(255,0,0,0.9))",
-      "brightness(1) drop-shadow(0px 10px 18px rgba(0,0,0,0.35))",
+      "drop-shadow(0px 15px 25px rgba(0, 243, 255, 0.2)) brightness(1)",
+      // エラーを表現する赤いフラッシュと色相の乱れ
+      "drop-shadow(0px 0px 40px rgba(255, 0, 60, 1)) brightness(2) saturate(3) hue-rotate(45deg)",
+      "drop-shadow(0px 15px 25px rgba(0, 243, 255, 0.2)) brightness(1)",
     ],
     transition: {
-      duration: 0.5,
-      ease: "easeInOut",
+      duration: 0.4,
+      ease: "linear",
     },
   },
   exit: {
     opacity: 0,
     x: 100,
-    y: 50,
-    rotate: 45, // 倒れながら退場
+    y: 80,
+    rotate: 45,
+    scale: 0.8,
+    filter: "brightness(0) blur(10px)", // シャットダウンするように消える
     transition: {
       duration: 0.6,
       ease: "easeIn",
@@ -74,42 +73,350 @@ const horseVariants: Variants = {
 
 export default function TrojanHorseIcon({
   size = 350,
-  color = "currentColor", // 親の文字色を継承
   state = "idle",
   onAnimationComplete,
 }: Props) {
   return (
-    <motion.svg
-      width={size}
-      height={size}
-      viewBox="0 0 600 600"
-      xmlns="http://www.w3.org/2000/svg"
+    <motion.div
       variants={horseVariants}
       initial="enter"
       animate={state}
       onAnimationComplete={(definition) => {
-        // 単発アニメーション終了時にコールバックを呼ぶ
         if (onAnimationComplete) {
           onAnimationComplete(definition as TrojanHorseState);
         }
       }}
       style={{
-        transformOrigin: "center bottom", // 足元を中心に揺れるように設定
-        display: "block",
+        width: size,
+        height: size,
+        transformOrigin: "center bottom",
+        display: "inline-block",
       }}
     >
-      <g
-        transform="translate(0,600) scale(0.1,-0.1)"
-        fill={color}
-        stroke="none"
-        fillRule="evenodd"
+      {/* 近未来サイバーパンク風 トロイの木馬 */}
+      <svg
+        viewBox="0 0 300 300"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ width: "100%", height: "100%" }}
       >
-        <path d="M1640 4743 c-47 -8 -89 -18 -93 -23 -7 -6 31 -171 79 -347 5 -17 15 -23 43 -25 l38 -3 -229 -277 -229 -277 58 -153 58 -153 126 -3 126 -3 45 53 c36 42 61 60 122 86 69 29 81 31 116 22 22 -6 40 -14 40 -18 0 -4 -16 -113 -35 -242 -54 -357 -48 -498 30 -675 24 -56 21 -14 50 -772 l15 -393 -75 -150 -75 -150 370 0 370 0 5 23 c5 22 82 538 127 850 l23 157 135 0 c118 0 195 7 391 36 l45 6 13 -43 c33 -113 140 -286 230 -374 23 -21 41 -44 41 -50 0 -5 -49 -141 -110 -300 -60 -160 -110 -293 -110 -297 0 -5 92 -8 204 -8 l203 0 61 237 c34 131 69 270 78 310 17 71 17 71 41 56 22 -15 23 -20 23 -145 l0 -130 -56 -132 c-31 -72 -63 -146 -70 -164 l-14 -32 270 0 270 0 0 389 0 390 -42 48 c-102 118 -111 196 -42 371 26 64 55 144 65 177 l17 60 1 -262 1 -263 175 0 175 0 0 463 c0 527 1 521 -82 613 -79 86 -191 119 -322 94 l-66 -12 -52 47 c-69 62 -135 99 -233 132 l-80 27 -440 6 c-390 5 -446 8 -490 24 -67 24 -109 51 -141 89 l-26 31 93 31 c51 17 94 36 96 42 6 18 -46 212 -83 306 -144 375 -444 629 -827 702 -101 19 -333 18 -447 -2z m458 -99 c82 -17 228 -69 237 -85 9 -13 -77 -161 -90 -155 -5 3 -39 17 -75 32 -48 20 -73 37 -95 68 -42 57 -109 95 -189 108 -36 6 -68 9 -70 7 -2 -2 -6 -40 -8 -84 l-3 -80 -50 0 -50 0 -24 93 c-13 51 -22 95 -19 98 3 2 41 9 84 14 100 11 254 4 352 -16z" />
-        <path d="M1777 4134 c-4 -4 -7 -27 -7 -51 l0 -43 51 0 50 0 -3 48 -3 47 -40 3 c-23 2 -44 0 -48 -4z" />
-        <path d="M1435 3778 c-2 -7 -3 -29 -2 -48 2 -34 3 -35 50 -38 l47 -3 0 50 0 51 -45 0 c-28 0 -47 -5 -50 -12z" />
-        <path d="M3160 3160 l0 -50 50 0 50 0 0 50 0 50 -50 0 -50 0 0 -50z" />
-        <path d="M3400 3161 l0 -51 45 0 c39 0 45 3 51 24 3 13 4 35 2 47 -3 21 -9 24 -50 27 l-48 3 0 -50z" />
-      </g>
-    </motion.svg>
+        <defs>
+          <linearGradient id="cyberArmorMain" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#1e293b" />
+            <stop offset="100%" stopColor="#0f172a" />
+          </linearGradient>
+          <linearGradient id="cyberArmorLight" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#334155" />
+            <stop offset="100%" stopColor="#1e293b" />
+          </linearGradient>
+          <radialGradient id="neonGlowCyan" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0%" stopColor="#00f3ff" />
+            <stop offset="100%" stopColor="#00f3ff" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+
+        {/* --- 奥のパーツ --- */}
+        {/* 奥のホバーホイール */}
+        <circle
+          cx="80"
+          cy="250"
+          r="24"
+          fill="#0f172a"
+          stroke="#00f3ff"
+          strokeWidth="2"
+          opacity="0.8"
+        />
+        <circle
+          cx="80"
+          cy="250"
+          r="10"
+          fill="url(#neonGlowCyan)"
+          opacity="0.6"
+        />
+
+        <circle
+          cx="220"
+          cy="250"
+          r="24"
+          fill="#0f172a"
+          stroke="#00f3ff"
+          strokeWidth="2"
+          opacity="0.8"
+        />
+        <circle
+          cx="220"
+          cy="250"
+          r="10"
+          fill="url(#neonGlowCyan)"
+          opacity="0.6"
+        />
+
+        {/* 奥の足（油圧シリンダー） */}
+        <rect x="73" y="180" width="14" height="70" fill="#334155" />
+        <rect x="76" y="210" width="8" height="40" fill="#cbd5e1" />
+        <rect x="213" y="180" width="14" height="70" fill="#334155" />
+        <rect x="216" y="210" width="8" height="40" fill="#cbd5e1" />
+
+        {/* --- 尻尾（データケーブル/排気エフェクト） --- */}
+        <path
+          d="M245,100 Q280,100 270,160"
+          fill="none"
+          stroke="#00f3ff"
+          strokeWidth="3"
+          style={{ filter: "drop-shadow(0 0 4px #00f3ff)" }}
+        />
+        <path
+          d="M245,110 Q290,120 280,170"
+          fill="none"
+          stroke="#ff003c"
+          strokeWidth="2"
+          style={{ filter: "drop-shadow(0 0 4px #ff003c)" }}
+        />
+        <path
+          d="M245,120 Q300,130 275,180"
+          fill="none"
+          stroke="#00f3ff"
+          strokeWidth="3"
+          style={{ filter: "drop-shadow(0 0 4px #00f3ff)" }}
+        />
+
+        {/* --- 胴体（ステルス装甲） --- */}
+        <path
+          d="M40,100 L80,70 L190,70 L250,100 L240,160 L50,160 Z"
+          fill="url(#cyberArmorMain)"
+          stroke="#0ea5e9"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+
+        {/* 装甲のパネルライン */}
+        <path d="M80,70 L80,160" stroke="#0ea5e9" strokeWidth="1.5" />
+        <path d="M190,70 L190,160" stroke="#0ea5e9" strokeWidth="1.5" />
+        <path d="M50,145 L243,145" stroke="#1e293b" strokeWidth="4" />
+
+        {/* 発光するエネルギーライン */}
+        <path
+          d="M45,130 L245,130"
+          stroke="#00f3ff"
+          strokeWidth="2"
+          style={{ filter: "drop-shadow(0 0 3px #00f3ff)" }}
+        />
+
+        {/* ハッチ（サーバーラック風エアロック） */}
+        <rect
+          x="110"
+          y="90"
+          width="60"
+          height="35"
+          rx="2"
+          fill="#020617"
+          stroke="#00f3ff"
+          strokeWidth="2"
+        />
+        <line
+          x1="120"
+          y1="100"
+          x2="160"
+          y2="100"
+          stroke="#ff003c"
+          strokeWidth="2"
+          style={{ filter: "drop-shadow(0 0 3px #ff003c)" }}
+        />
+        <line
+          x1="120"
+          y1="108"
+          x2="160"
+          y2="108"
+          stroke="#00f3ff"
+          strokeWidth="2"
+          opacity="0.6"
+        />
+        <line
+          x1="120"
+          y1="116"
+          x2="160"
+          y2="116"
+          stroke="#00f3ff"
+          strokeWidth="2"
+          opacity="0.6"
+        />
+
+        {/* ナンバリング / デカール */}
+        <text
+          x="198"
+          y="95"
+          fill="#334155"
+          fontSize="16"
+          fontWeight="bold"
+          fontFamily="monospace"
+          transform="rotate(10, 198, 95)"
+        >
+          TR-01
+        </text>
+
+        {/* --- 首・頭部 --- */}
+        {/* 首 */}
+        <path
+          d="M50,100 L80,100 L100,30 L60,10 Z"
+          fill="url(#cyberArmorLight)"
+          stroke="#0ea5e9"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+
+        {/* 頭部コア */}
+        <path
+          d="M60,10 L100,30 L80,60 L20,40 Z"
+          fill="url(#cyberArmorMain)"
+          stroke="#0ea5e9"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+
+        {/* 顎・メカニカルパーツ */}
+        <path
+          d="M20,40 L40,60 L70,55"
+          fill="none"
+          stroke="#64748b"
+          strokeWidth="4"
+          strokeLinejoin="round"
+        />
+
+        {/* 目（サイクロプス型バイザー） */}
+        <polygon
+          points="30,30 80,18 80,24 30,35"
+          fill="#ff003c"
+          style={{ filter: "drop-shadow(0 0 6px #ff003c)" }}
+        />
+        <polygon
+          points="32,31 78,20 78,22 32,33"
+          fill="#ffffff"
+          opacity="0.9"
+        />
+
+        {/* たてがみ（ホログラムエッジ/プラズマブレード） */}
+        <path
+          d="M60,10 L40,-10 L80,5 L70,-15 L95,15 L100,-5 L110,25"
+          fill="none"
+          stroke="#00f3ff"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{ filter: "drop-shadow(0 0 5px #00f3ff)" }}
+          opacity="0.8"
+        />
+
+        {/* --- 手前のパーツ --- */}
+        {/* 手前の足（シリンダー機構） */}
+        <rect
+          x="93"
+          y="160"
+          width="14"
+          height="90"
+          fill="#1e293b"
+          stroke="#00f3ff"
+          strokeWidth="1"
+        />
+        <rect x="95" y="200" width="10" height="50" fill="#94a3b8" />
+        <circle cx="100" cy="165" r="5" fill="#00f3ff" />
+
+        <rect
+          x="193"
+          y="160"
+          width="14"
+          height="90"
+          fill="#1e293b"
+          stroke="#00f3ff"
+          strokeWidth="1"
+        />
+        <rect x="195" y="200" width="10" height="50" fill="#94a3b8" />
+        <circle cx="200" cy="165" r="5" fill="#00f3ff" />
+
+        {/* 手前のホイール（マグネティック・ホバーリング） */}
+        <circle
+          cx="100"
+          cy="260"
+          r="30"
+          fill="#0f172a"
+          stroke="#00f3ff"
+          strokeWidth="3"
+          style={{ filter: "drop-shadow(0 0 8px rgba(0,243,255,0.4))" }}
+        />
+        <circle
+          cx="100"
+          cy="260"
+          r="16"
+          fill="#1e293b"
+          stroke="#ff003c"
+          strokeWidth="2"
+        />
+        <circle
+          cx="100"
+          cy="260"
+          r="6"
+          fill="#00f3ff"
+          style={{ filter: "drop-shadow(0 0 5px #00f3ff)" }}
+        />
+        {/* スポーク十字 */}
+        <line
+          x1="70"
+          y1="260"
+          x2="130"
+          y2="260"
+          stroke="#0ea5e9"
+          strokeWidth="3"
+        />
+        <line
+          x1="100"
+          y1="230"
+          x2="100"
+          y2="290"
+          stroke="#0ea5e9"
+          strokeWidth="3"
+        />
+
+        <circle
+          cx="200"
+          cy="260"
+          r="30"
+          fill="#0f172a"
+          stroke="#00f3ff"
+          strokeWidth="3"
+          style={{ filter: "drop-shadow(0 0 8px rgba(0,243,255,0.4))" }}
+        />
+        <circle
+          cx="200"
+          cy="260"
+          r="16"
+          fill="#1e293b"
+          stroke="#ff003c"
+          strokeWidth="2"
+        />
+        <circle
+          cx="200"
+          cy="260"
+          r="6"
+          fill="#00f3ff"
+          style={{ filter: "drop-shadow(0 0 5px #00f3ff)" }}
+        />
+        {/* スポーク十字 */}
+        <line
+          x1="170"
+          y1="260"
+          x2="230"
+          y2="260"
+          stroke="#0ea5e9"
+          strokeWidth="3"
+        />
+        <line
+          x1="200"
+          y1="230"
+          x2="200"
+          y2="290"
+          stroke="#0ea5e9"
+          strokeWidth="3"
+        />
+      </svg>
+    </motion.div>
   );
 }

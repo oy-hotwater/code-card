@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { Card } from "../game/types";
-import type { TrojanHorseState } from "./components/TrojanHorseIcon";
-import TrojanHorseIcon from "./components/TrojanHorseIcon";
+import TrojanHorseIcon, {
+  type TrojanHorseState,
+} from "./components/TrojanHorseIcon";
 
 type Props = {
   enemyHp: number;
@@ -18,12 +19,10 @@ export function BattleBoard({
   onEndTurn,
   selectedCard,
 }: Props) {
-  // アニメーションの状態管理を追加
   const [enemyState, setEnemyState] = useState<TrojanHorseState>("enter");
 
-  // デバッグ用：クリックでランダムにアニメーションを再生
   const handleEnemyClick = () => {
-    if (enemyState !== "idle") return; // 実行中なら無視
+    if (enemyState !== "idle") return;
     const actions: TrojanHorseState[] = ["attack", "damage", "exit"];
     const randomAction = actions[Math.floor(Math.random() * actions.length)];
     setEnemyState(randomAction);
@@ -53,7 +52,6 @@ export function BattleBoard({
       <div className="arena">
         <div className="enemyWrap">
           <div className="enemyName">TROJAN</div>
-          {/* クリックイベントを追加 */}
           <div
             className="enemySprite"
             onClick={handleEnemyClick}
@@ -63,7 +61,6 @@ export function BattleBoard({
             <TrojanHorseIcon
               state={enemyState}
               onAnimationComplete={(completedState) => {
-                // アニメーションが完了したら待機状態（idle）に戻す
                 if (
                   completedState === "attack" ||
                   completedState === "damage" ||
@@ -71,7 +68,6 @@ export function BattleBoard({
                 ) {
                   setEnemyState("idle");
                 } else if (completedState === "exit") {
-                  // 退場後は再登場させる（テスト用）
                   setTimeout(() => setEnemyState("enter"), 1000);
                 }
               }}
