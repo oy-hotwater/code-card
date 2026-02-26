@@ -13,6 +13,7 @@ type Props = {
 
   selected: boolean;
   onHoverSelect: (cardId: string) => void;
+  isExecuting: boolean;
 };
 
 function rarityClass(r: Card["rarity"]) {
@@ -31,35 +32,35 @@ export function CardView({
   onDropToPlayZone,
   selected,
   onHoverSelect,
+  isExecuting,
 }: Props) {
   const [hovered, setHovered] = useState(false);
 
-  // drag中の位置（手札の扇形レイアウトとは別に「掴んで動かす」値）
+  // drag中の位置
   const dragX = useMotionValue(0);
   const dragY = useMotionValue(0);
 
   const liftY = useMemo(() => {
-    // hovered時は持ち上げる。drag中はもっと自由に（ここでは固定値にしない）
     if (isDragging) return 0;
-    return hovered ? -120 : 0;
-  }, [hovered, isDragging]);
+    return hovered && !isExecuting ? -120 : 0; // 実行中は持ち上げない
+  }, [hovered, isDragging, isExecuting]);
 
-  const scale = isDragging ? 1.08 : hovered ? 1.18 : 1.0;
+  // 実行中かつドラッグ中でない場合はスケールアップを抑制
+  const scale = isDragging ? 1.08 : hovered && !isExecuting ? 1.18 : 1.0;
   const rotate = isDragging ? 0 : baseRotate;
 
   function handleDragStart() {
+    if (isExecuting) return; // 念のため
     setDragging(true);
     setHovered(false);
   }
 
   function handleDragEnd() {
-    // ざっくり判定：「上に持っていったらプレイ」
-    // StSっぽくしたいなら、ここを「プレイゾーンの当たり判定」へ置換する
     const y = dragY.get();
     const x = dragX.get();
     const played = y < -140 && Math.abs(x) < 260;
 
-    if (played) onDropToPlayZone();
+    if (played && !isExecuting) onDropToPlayZone();
 
     // 位置を戻す（手札位置へスナップ）
     dragX.set(0);
@@ -79,14 +80,16 @@ export function CardView({
       animate={{ y: baseY + liftY, scale }}
       transition={{ type: "spring", stiffness: 500, damping: 35 }}
       onMouseEnter={() => {
-        setHovered(true);
-        onHoverSelect(card.id);
+        if (!isExecuting) {
+          setHovered(true);
+          onHoverSelect(card.id);
+        }
       }}
       onMouseLeave={() => setHovered(false)}
     >
       <motion.div
         className="cardInner"
-        drag
+        drag={!isExecuting} // ★ 実行中はドラッグを無効化
         dragMomentum={false}
         dragElastic={0.15}
         onDragStart={handleDragStart}

@@ -14,6 +14,10 @@ export default function App() {
           lastLog={game.lastLog}
           onEndTurn={game.endTurn}
           selectedCard={game.selectedCard}
+          executingCard={game.executingCard}
+          currentLineIndex={game.currentLineIndex}
+          enemyAnimState={game.enemyAnimState}
+          setEnemyAnimState={game.setEnemyAnimState}
         />
 
         <Hand
@@ -23,6 +27,7 @@ export default function App() {
           onPlayCard={game.playCard}
           selectedId={game.selectedId}
           onSelectCard={game.setSelectedId}
+          isExecuting={game.isExecuting}
         />
       </div>
     </div>

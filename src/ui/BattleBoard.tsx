@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type { Card } from "../game/types";
 import TrojanHorseIcon, {
   type TrojanHorseState,
@@ -10,6 +9,10 @@ type Props = {
   lastLog: string;
   onEndTurn: () => void;
   selectedCard: Card | null;
+  executingCard: Card | null;
+  currentLineIndex: number;
+  enemyAnimState: TrojanHorseState;
+  setEnemyAnimState: (state: TrojanHorseState) => void;
 };
 
 export function BattleBoard({
@@ -18,14 +21,17 @@ export function BattleBoard({
   lastLog,
   onEndTurn,
   selectedCard,
+  executingCard,
+  currentLineIndex,
+  enemyAnimState,
+  setEnemyAnimState,
 }: Props) {
-  const [enemyState, setEnemyState] = useState<TrojanHorseState>("enter");
-
   const handleEnemyClick = () => {
-    if (enemyState !== "idle") return;
+    if (executingCard) return; // 実行中はお遊びモーションを無効化
+    if (enemyAnimState !== "idle") return;
     const actions: TrojanHorseState[] = ["attack", "damage", "exit"];
     const randomAction = actions[Math.floor(Math.random() * actions.length)];
-    setEnemyState(randomAction);
+    setEnemyAnimState(randomAction);
   };
 
   return (
@@ -55,20 +61,21 @@ export function BattleBoard({
           <div
             className="enemySprite"
             onClick={handleEnemyClick}
-            style={{ cursor: "pointer" }}
-            title="クリックでモーションをテスト"
+            style={{ cursor: executingCard ? "default" : "pointer" }}
+            title={executingCard ? "" : "クリックでモーションをテスト"}
           >
             <TrojanHorseIcon
-              state={enemyState}
+              state={enemyAnimState}
               onAnimationComplete={(completedState) => {
+                // 自動でidle等に戻す処理
                 if (
                   completedState === "attack" ||
                   completedState === "damage" ||
                   completedState === "enter"
                 ) {
-                  setEnemyState("idle");
+                  setEnemyAnimState("idle");
                 } else if (completedState === "exit") {
-                  setTimeout(() => setEnemyState("enter"), 1000);
+                  setTimeout(() => setEnemyAnimState("enter"), 1000);
                 }
               }}
             />
@@ -78,11 +85,31 @@ export function BattleBoard({
 
       <div className="codePanel">
         <div className="codeTitle">
-          {selectedCard ? `Code: ${selectedCard.name}` : "Code"}
+          {executingCard
+            ? `Executing: ${executingCard.name}`
+            : selectedCard
+              ? `Code: ${selectedCard.name}`
+              : "Code"}
         </div>
-        <pre className="codeBox">
-          <code>{selectedCard?.code ?? "カードを選んでコードを表示"}</code>
-        </pre>
+
+        {/* コードを1行ずつレンダリングしてハイライトを当てる */}
+        <div className="codeBox">
+          {(() => {
+            const cardToDisplay = executingCard || selectedCard;
+            if (!cardToDisplay) {
+              return <div className="codeLine">カードを選んでコードを表示</div>;
+            }
+
+            return cardToDisplay.codeLines.map((line, i) => {
+              const isActive = executingCard != null && i === currentLineIndex;
+              return (
+                <div key={i} className={`codeLine ${isActive ? "active" : ""}`}>
+                  {line.text === "" ? " " : line.text}
+                </div>
+              );
+            });
+          })()}
+        </div>
       </div>
     </div>
   );

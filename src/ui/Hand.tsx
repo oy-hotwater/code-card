@@ -9,10 +9,9 @@ type Props = {
 
   selectedId: CardId | null;
   onSelectCard: (cardId: CardId) => void;
+  isExecuting: boolean; // 実行中フラグを追加
 };
 
-// ざっくり「中央に扇形」
-// index → 角度/位置を決める
 function fanTransform(index: number, count: number) {
   const mid = (count - 1) / 2;
   const dx = (index - mid) * 90; // 横の広がり
@@ -28,6 +27,7 @@ export function Hand({
   onPlayCard,
   selectedId,
   onSelectCard,
+  isExecuting,
 }: Props) {
   return (
     <div className="handWrap">
@@ -48,6 +48,7 @@ export function Hand({
               onDropToPlayZone={() => onPlayCard(card.id)}
               selected={selectedId === card.id}
               onHoverSelect={onSelectCard}
+              isExecuting={isExecuting} // CardViewへ伝達
             />
           );
         })}
