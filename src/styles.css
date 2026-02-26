@@ -1,0 +1,334 @@
+:root {
+  color-scheme: dark;
+
+  /* =========================================
+     テーマ: Python IDE
+     落ち着いたネイビーブルーを基調とし、
+     アクセントにイエローを使用します。
+     ========================================= */
+  --py-bg-base: #151d2d; /* アプリ全体の背景 */
+  --py-bg-panel: #2a3441; /* パネルやカードの背景 */
+  --py-bg-code: #13171f; /* コード表示やコストの背景（より暗く） */
+  --py-border: #3a4659; /* 境界線 */
+  --py-accent: #c2c97d; /* アクセントのイエロー */
+  --py-text-main: #91a0bd; /* メインテキスト */
+  --py-text-muted: #94a3b8; /* サブテキスト */
+
+  /* IDE風フォント設定 */
+  --font-ui: "Segoe UI", "Noto Sans JP", sans-serif;
+  --font-code: "Consolas", "Courier New", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+.appRoot {
+  height: 100%;
+  background: var(--py-bg-base);
+  color: var(--py-text-main);
+  font-family: var(--font-ui);
+}
+
+.stage {
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+
+.board {
+  position: relative;
+  padding: 18px;
+}
+
+.hud {
+  display: grid;
+  gap: 10px;
+  max-width: 520px;
+}
+
+.hpRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.hpBox {
+  background: var(--py-bg-panel);
+  border: 1px solid var(--py-border);
+  border-radius: 6px; /* IDE風に角を小さく */
+  padding: 10px 12px;
+}
+
+.hpLabel {
+  color: var(--py-text-muted);
+  font-size: 12px;
+  font-family: var(--font-code);
+}
+.hpValue {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--py-accent); /* イエローのアクセント */
+  font-family: var(--font-code);
+}
+
+.log {
+  background: var(--py-bg-code);
+  border: 1px solid var(--py-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  font-family: var(--font-code);
+  color: var(--py-text-main);
+}
+
+.endTurnBtn {
+  width: 160px;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px solid var(--py-accent);
+  background: rgba(255, 212, 59, 0.1);
+  color: var(--py-accent);
+  cursor: pointer;
+  font-family: var(--font-code);
+  font-weight: bold;
+  transition: 0.2s ease;
+}
+.endTurnBtn:hover {
+  background: var(--py-accent);
+  color: var(--py-bg-code);
+}
+
+.arena {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.enemyDummy {
+  width: 180px;
+  height: 180px;
+  border-radius: 24px;
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  display: grid;
+  place-items: center;
+  opacity: 0.7;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.handWrap {
+  position: relative;
+  padding: 8px 14px 24px;
+}
+
+.hand {
+  height: 260px;
+  display: grid;
+  place-items: end center;
+  position: relative;
+  overflow: visible;
+}
+
+.playHint {
+  text-align: center;
+  color: var(--py-text-muted);
+  font-size: 12px;
+  margin-top: -6px;
+  font-family: var(--font-code);
+}
+
+.card {
+  position: absolute;
+  width: 170px;
+  height: 240px;
+  transform-origin: 50% 100%;
+  user-select: none;
+}
+
+.card.dragging {
+  filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.45));
+}
+
+.cardInner {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px; /* 少しだけ丸く */
+  border: 1px solid var(--py-border);
+  background: var(--py-bg-panel);
+  overflow: hidden;
+  cursor: grab;
+}
+
+.cardInner:active {
+  cursor: grabbing;
+}
+
+.rarityCommon .cardInner {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+.rarityUncommon .cardInner {
+  box-shadow: inset 0 0 0 1px rgba(120, 255, 200, 0.16);
+}
+.rarityRare .cardInner {
+  box-shadow: inset 0 0 0 1px rgba(120, 180, 255, 0.18);
+}
+
+.cardTop {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 10px;
+  padding: 10px 10px 0;
+  align-items: center;
+}
+
+.cost {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  display: grid;
+  place-items: center;
+  background: var(--py-bg-code);
+  border: 1px solid var(--py-border);
+  font-weight: 800;
+  color: var(--py-accent);
+  font-family: var(--font-code);
+}
+
+.name {
+  font-weight: 800;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-code);
+}
+
+.art {
+  margin: 10px;
+  height: 120px;
+  border-radius: 4px;
+  background: var(--py-bg-code);
+  border: 1px solid var(--py-border);
+  display: grid;
+  place-items: center;
+}
+
+.artDummy {
+  color: var(--py-text-muted);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-family: var(--font-code);
+}
+
+.text {
+  padding: 0 12px;
+  color: var(--py-text-muted);
+  font-size: 12px;
+  line-height: 1.25rem;
+  min-height: 44px;
+}
+
+.cardBottom {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pill {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--py-bg-code);
+  border: 1px solid var(--py-border);
+  text-transform: uppercase;
+  color: var(--py-text-muted);
+  font-family: var(--font-code);
+}
+
+.card.selected {
+  outline: 2px solid var(--py-accent); /* 選択時は黄色でハイライト */
+}
+
+.codePanel {
+  margin-top: 12px;
+}
+.codeTitle {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--py-accent);
+  font-family: var(--font-code);
+}
+.codeBox {
+  padding: 12px;
+  border-radius: 6px;
+  background: var(--py-bg-code);
+  border: 1px solid var(--py-border);
+  overflow: auto;
+  font-family: var(--font-code);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.enemyWrap {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+}
+
+.enemyName {
+  letter-spacing: 0.14em;
+  color: var(--py-text-muted);
+  font-weight: 700;
+  font-family: var(--font-code);
+}
+
+.enemySprite {
+  color: rgba(220, 220, 220, 0.9);
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.35));
+}
+
+.codeBox {
+  padding: 12px;
+  border-radius: 6px;
+  background: var(--py-bg-code);
+  border: 1px solid var(--py-border);
+  overflow: auto;
+  font-family: var(--font-code);
+  font-size: 13px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+}
+
+.codeLine {
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: pre; /* インデントをそのまま保持する */
+  min-height: 20px; /* 空行の高さを確保 */
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+  color: var(--py-text-main);
+}
+
+.codeLine.active {
+  /* アクティブな行をイエローの半透明背景でハイライト */
+  background-color: rgba(194, 201, 125, 0.15);
+  color: var(--py-accent);
+  font-weight: bold;
+}
