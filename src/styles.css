@@ -2,79 +2,38 @@
   color-scheme: dark;
 
   /* =========================================
-     テーマ選択（使いたいテーマのコメントを外してください）
+     テーマ: Python IDE
+     落ち着いたネイビーブルーを基調とし、
+     アクセントにイエローを使用します。
      ========================================= */
+  --py-bg-base: #151d2d; /* アプリ全体の背景 */
+  --py-bg-panel: #2a3441; /* パネルやカードの背景 */
+  --py-bg-code: #13171f; /* コード表示やコストの背景（より暗く） */
+  --py-border: #3a4659; /* 境界線 */
+  --py-accent: #c2c97d; /* アクセントのイエロー */
+  --py-text-main: #91a0bd; /* メインテキスト */
+  --py-text-muted: #94a3b8; /* サブテキスト */
 
-  /* ▼▼▼ 案A: VS Code (Dark+) 風 ▼▼▼ */
-  --bg-app: #1e1e1e;
-  --bg-panel: #252526;
-  --bg-card: #2d2d2d;
-  --bg-code: #1e1e1e;
-  --border-color: #454545;
-  --border-card: #3c3c3c;
-  --text-main: #d4d4d4;
-  --text-muted: #858585;
-  --accent-color: #007acc;
-  --color-common: rgba(255, 255, 255, 0.15);
-  --color-uncommon: rgba(78, 201, 176, 0.6); /* VSCodeの型色 */
-  --color-rare: rgba(197, 134, 192, 0.6); /* VSCodeの制御構文色 */
+  /* IDE風フォント設定 */
   --font-ui: "Segoe UI", "Noto Sans JP", sans-serif;
   --font-code: "Consolas", "Courier New", monospace;
-  /* ▲▲▲ 案A ここまで ▲▲▲ */
-
-  /* ▼▼▼ 案B: One Dark (Atom/GitHub) 風 ▼▼▼ */
-  /*
-  --bg-app: #282c34;
-  --bg-panel: #21252b;
-  --bg-card: #353b45;
-  --bg-code: #282c34;
-  --border-color: #181a1f;
-  --border-card: #181a1f;
-  --text-main: #abb2bf;
-  --text-muted: #5c6370;
-  --accent-color: #61afef;
-  --color-common: rgba(171, 178, 191, 0.2);
-  --color-uncommon: rgba(152, 195, 121, 0.6);
-  --color-rare: rgba(198, 120, 221, 0.6);
-  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-code: "Fira Code", "Source Code Pro", monospace;
-  */
-
-  /* ▼▼▼ 案C: Monokai (Sublime Text) 風 ▼▼▼ */
-  /*
-  --bg-app: #272822;
-  --bg-panel: #1e1f1c;
-  --bg-card: #3e3d32;
-  --bg-code: #272822;
-  --border-color: #49483e;
-  --border-card: #49483e;
-  --text-main: #f8f8f2;
-  --text-muted: #75715e;
-  --accent-color: #fd971f;
-  --color-common: rgba(248, 248, 242, 0.15);
-  --color-uncommon: rgba(166, 226, 46, 0.6);
-  --color-rare: rgba(102, 217, 239, 0.6);
-  --font-ui: "Ubuntu", "Segoe UI", sans-serif;
-  --font-code: "Monaco", "Consolas", monospace;
-  */
 }
 
 * {
   box-sizing: border-box;
 }
-
 html,
 body,
 #root {
   height: 100%;
   margin: 0;
-  background-color: var(--bg-app);
-  color: var(--text-main);
-  font-family: var(--font-ui);
 }
 
 .appRoot {
   height: 100%;
+  background: var(--py-bg-base);
+  color: var(--py-text-main);
+  font-family: var(--font-ui);
 }
 
 .stage {
@@ -100,54 +59,53 @@ body,
   gap: 12px;
 }
 
-/* IDE風に角丸を小さく(4px)し、ボーダーを強調 */
 .hpBox {
-  background: var(--bg-panel);
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+  background: var(--py-bg-panel);
+  border: 1px solid var(--py-border);
+  border-radius: 6px; /* IDE風に角を小さく */
   padding: 10px 12px;
 }
 
 .hpLabel {
-  color: var(--text-muted);
+  color: var(--py-text-muted);
   font-size: 12px;
   font-family: var(--font-code);
 }
-
 .hpValue {
   font-size: 18px;
   font-weight: 700;
+  color: var(--py-accent); /* イエローのアクセント */
   font-family: var(--font-code);
 }
 
 .log {
-  background: var(--bg-panel);
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+  background: var(--py-bg-code);
+  border: 1px solid var(--py-border);
+  border-radius: 6px;
   padding: 10px 12px;
   min-height: 44px;
   display: flex;
   align-items: center;
-  font-family: var(--font-code);
   font-size: 13px;
-  color: var(--text-main);
+  font-family: var(--font-code);
+  color: var(--py-text-main);
 }
 
 .endTurnBtn {
   width: 160px;
-  height: 36px;
-  border-radius: 4px;
-  border: 1px solid var(--accent-color);
-  background: var(--accent-color);
-  color: #fff;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px solid var(--py-accent);
+  background: rgba(255, 212, 59, 0.1);
+  color: var(--py-accent);
   cursor: pointer;
-  font-family: var(--font-ui);
-  font-weight: 600;
-  transition: opacity 0.2s;
+  font-family: var(--font-code);
+  font-weight: bold;
+  transition: 0.2s ease;
 }
-
 .endTurnBtn:hover {
-  opacity: 0.8;
+  background: var(--py-accent);
+  color: var(--py-bg-code);
 }
 
 .arena {
@@ -158,53 +116,21 @@ body,
   pointer-events: none;
 }
 
-.enemyWrap {
+.enemyDummy {
+  width: 180px;
+  height: 180px;
+  border-radius: 24px;
+  border: 1px dashed rgba(255, 255, 255, 0.25);
   display: grid;
   place-items: center;
-  gap: 10px;
-}
-
-.enemyName {
-  letter-spacing: 0.14em;
-  color: var(--text-muted);
-  font-weight: 700;
-  font-family: var(--font-code);
-}
-
-.enemySprite {
-  color: rgba(220, 220, 220, 0.9);
-  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.35));
-}
-
-.codePanel {
-  margin-top: 12px;
-  max-width: 520px;
-}
-
-.codeTitle {
-  font-weight: 600;
-  margin-bottom: 6px;
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-.codeBox {
-  padding: 12px;
-  border-radius: 4px;
-  background: var(--bg-code);
-  border: 1px solid var(--border-color);
-  overflow: auto;
-  font-family: var(--font-code);
-  font-size: 13px;
-  line-height: 1.5;
-  margin: 0;
+  opacity: 0.7;
+  font-weight: 800;
+  letter-spacing: 0.08em;
 }
 
 .handWrap {
   position: relative;
   padding: 8px 14px 24px;
-  background: var(--bg-panel); /* 手札エリアに少し背景色をつける */
-  border-top: 1px solid var(--border-color);
 }
 
 .hand {
@@ -217,7 +143,7 @@ body,
 
 .playHint {
   text-align: center;
-  color: var(--text-muted);
+  color: var(--py-text-muted);
   font-size: 12px;
   margin-top: -6px;
   font-family: var(--font-code);
@@ -232,18 +158,17 @@ body,
 }
 
 .card.dragging {
-  filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.45));
 }
 
 .cardInner {
   width: 100%;
   height: 100%;
-  border-radius: 8px; /* カードはエディタっぽさを出しつつ少しだけ丸く */
-  border: 1px solid var(--border-card);
-  background: var(--bg-card);
+  border-radius: 8px; /* 少しだけ丸く */
+  border: 1px solid var(--py-border);
+  background: var(--py-bg-panel);
   overflow: hidden;
   cursor: grab;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .cardInner:active {
@@ -251,72 +176,67 @@ body,
 }
 
 .rarityCommon .cardInner {
-  box-shadow:
-    inset 0 2px 0 0 var(--color-common),
-    0 4px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 .rarityUncommon .cardInner {
-  box-shadow:
-    inset 0 2px 0 0 var(--color-uncommon),
-    0 4px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(120, 255, 200, 0.16);
 }
 .rarityRare .cardInner {
-  box-shadow:
-    inset 0 2px 0 0 var(--color-rare),
-    0 4px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(120, 180, 255, 0.18);
 }
 
 .cardTop {
   display: grid;
-  grid-template-columns: 30px 1fr;
+  grid-template-columns: 34px 1fr;
   gap: 10px;
   padding: 10px 10px 0;
   align-items: center;
 }
 
 .cost {
-  width: 28px;
-  height: 28px;
-  border-radius: 4px; /* コストも四角く */
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
   display: grid;
   place-items: center;
-  background: var(--bg-app);
-  border: 1px solid var(--border-color);
-  font-weight: bold;
+  background: var(--py-bg-code);
+  border: 1px solid var(--py-border);
+  font-weight: 800;
+  color: var(--py-accent);
   font-family: var(--font-code);
-  font-size: 14px;
 }
 
 .name {
-  font-weight: 600;
+  font-weight: 800;
   font-size: 14px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-family: var(--font-code);
 }
 
 .art {
   margin: 10px;
-  height: 100px;
+  height: 120px;
   border-radius: 4px;
-  background: var(--bg-app);
-  border: 1px solid var(--border-color);
+  background: var(--py-bg-code);
+  border: 1px solid var(--py-border);
   display: grid;
   place-items: center;
 }
 
 .artDummy {
-  color: var(--text-muted);
-  font-weight: bold;
-  letter-spacing: 0.05em;
-  font-size: 12px;
+  color: var(--py-text-muted);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-family: var(--font-code);
 }
 
 .text {
   padding: 0 12px;
-  color: var(--text-main);
+  color: var(--py-text-muted);
   font-size: 12px;
-  line-height: 1.4;
+  line-height: 1.25rem;
   min-height: 44px;
 }
 
@@ -330,17 +250,54 @@ body,
 }
 
 .pill {
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 2px;
-  background: var(--bg-app);
-  border: 1px solid var(--border-color);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--py-bg-code);
+  border: 1px solid var(--py-border);
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--py-text-muted);
   font-family: var(--font-code);
 }
 
 .card.selected {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 2px;
+  outline: 2px solid var(--py-accent); /* 選択時は黄色でハイライト */
+}
+
+.codePanel {
+  margin-top: 12px;
+}
+.codeTitle {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--py-accent);
+  font-family: var(--font-code);
+}
+.codeBox {
+  padding: 12px;
+  border-radius: 6px;
+  background: var(--py-bg-code);
+  border: 1px solid var(--py-border);
+  overflow: auto;
+  font-family: var(--font-code);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.enemyWrap {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+}
+
+.enemyName {
+  letter-spacing: 0.14em;
+  color: var(--py-text-muted);
+  font-weight: 700;
+  font-family: var(--font-code);
+}
+
+.enemySprite {
+  color: rgba(220, 220, 220, 0.9);
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.35));
 }
