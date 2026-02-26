@@ -12,11 +12,10 @@ allowing beginners to intuitively understand how code works.
 
 ---
 
-## デモ画像/ demo images
+## デモ映像/ demo movies
 
-
-https://github.com/user-attachments/assets/928cb9a4-d42a-49d8-ae1b-5de108eaa8d4
-
+- 2026-02-27: Framer Motionを適応したUIへの変更結果。カードコンポーネント実装、Pythonコード実行、敵の挙動反映、の実装がわかる。
+  https://github.com/user-attachments/assets/928cb9a4-d42a-49d8-ae1b-5de108eaa8d4
 
 ---
 
