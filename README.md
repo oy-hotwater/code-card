@@ -6,6 +6,13 @@
 
 <video src="https://github.com/user-attachments/assets/928cb9a4-d42a-49d8-ae1b-5de108eaa8d4"></video>
 
+<details>
+  <summary>過去のデモ動画を見る（ここをクリック）</summary>
+
+  https://github.com/user-attachments/assets/d563a36e-0478-4aea-b632-902792bebbd7
+
+</details>
+
 ---
 
 ## 概要 / Overview
