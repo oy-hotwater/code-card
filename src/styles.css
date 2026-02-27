@@ -27,6 +27,7 @@ body,
 #root {
   height: 100%;
   margin: 0;
+  overflow: hidden; /* 画面全体の予期せぬスクロールを防ぐ */
 }
 
 .appRoot {
@@ -39,31 +40,54 @@ body,
 .stage {
   height: 100%;
   display: grid;
-  grid-template-rows: 1fr auto;
+  /* 1frだと中身の高さで伸びてしまうため minmax(0, 1fr) で領域を固定 */
+  grid-template-rows: minmax(0, 1fr) auto;
 }
 
 .board {
   position: relative;
   padding: 18px;
+  height: 100%; /* 高さを100%確保 */
 }
 
+/* =========================================
+   HUD (画面左上) 
+   絶対配置で固定し、ステータスを縦に並べる
+   ========================================= */
 .hud {
+  position: absolute;
+  top: 18px;
+  left: 18px;
   display: grid;
   gap: 10px;
-  max-width: 520px;
+  width: 300px;
+  z-index: 10;
+}
+
+.turnIndicator {
+  font-family: var(--font-code);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: -4px;
+  transition: color 0.3s;
 }
 
 .hpRow {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: 1fr; /* 縦並びに変更してコンパクトに */
+  gap: 8px;
 }
 
 .hpBox {
   background: var(--py-bg-panel);
   border: 1px solid var(--py-border);
-  border-radius: 6px; /* IDE風に角を小さく */
-  padding: 10px 12px;
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex; /* ラベルと数値を左右に振り分け */
+  justify-content: space-between;
+  align-items: center;
 }
 
 .hpLabel {
@@ -71,10 +95,21 @@ body,
   font-size: 12px;
   font-family: var(--font-code);
 }
+
 .hpValue {
   font-size: 18px;
   font-weight: 700;
-  color: var(--py-accent); /* イエローのアクセント */
+  color: var(--py-accent);
+  font-family: var(--font-code);
+}
+
+.blockBadge {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 14px;
   font-family: var(--font-code);
 }
 
@@ -103,34 +138,108 @@ body,
   font-weight: bold;
   transition: 0.2s ease;
 }
-.endTurnBtn:hover {
+.endTurnBtn:hover:not(:disabled) {
   background: var(--py-accent);
   color: var(--py-bg-code);
 }
+.endTurnBtn:disabled {
+  border-color: var(--py-border);
+  color: var(--py-text-muted);
+  background: var(--py-bg-panel);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
 
+/* =========================================
+   Code Panel (画面右上) 
+   絶対配置で高さを制限し、内部スクロール化
+   ========================================= */
+.codePanel {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 340px;
+  max-height: calc(100% - 36px); /* 画面下にはみ出ないように */
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.codeTitle {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--py-accent);
+  font-family: var(--font-code);
+}
+
+.codeBox {
+  padding: 12px;
+  border-radius: 6px;
+  background: var(--py-bg-code);
+  border: 1px solid var(--py-border);
+  overflow-y: auto; /* 長いコードはここでスクロール */
+  font-family: var(--font-code);
+  font-size: 13px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* 残りの高さを埋める */
+}
+
+.codeLine {
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: pre;
+  min-height: 20px;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+  color: var(--py-text-main);
+}
+
+.codeLine.active {
+  background-color: rgba(194, 201, 125, 0.15);
+  color: var(--py-accent);
+  font-weight: bold;
+}
+
+/* =========================================
+   Arena (画面中央)
+   ========================================= */
 .arena {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  pointer-events: none;
+  pointer-events: none; /* 下層の手札などの操作を妨げない */
 }
 
-.enemyDummy {
-  width: 180px;
-  height: 180px;
-  border-radius: 24px;
-  border: 1px dashed rgba(255, 255, 255, 0.25);
+.enemyWrap {
   display: grid;
   place-items: center;
-  opacity: 0.7;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  gap: 10px;
 }
 
+.enemyName {
+  letter-spacing: 0.14em;
+  color: var(--py-text-muted);
+  font-weight: 700;
+  font-family: var(--font-code);
+}
+
+.enemySprite {
+  color: rgba(220, 220, 220, 0.9);
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.35));
+  pointer-events: auto; /* アリーナの pointer-events:none を打ち消す */
+}
+
+/* =========================================
+   Hand (手札)
+   ========================================= */
 .handWrap {
   position: relative;
   padding: 8px 14px 24px;
+  z-index: 20; /* コードパネルより手前に */
 }
 
 .hand {
@@ -149,26 +258,37 @@ body,
   font-family: var(--font-code);
 }
 
+/* --- Card View --- */
 .card {
   position: absolute;
   width: 170px;
   height: 240px;
   transform-origin: 50% 100%;
   user-select: none;
+  transition: filter 0.3s ease;
 }
 
 .card.dragging {
   filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.45));
 }
 
+.card.disabled .cardInner {
+  filter: brightness(0.6) grayscale(0.5);
+}
+.card.disabled .cost {
+  color: #ff4a4a;
+  border-color: #ff4a4a;
+}
+
 .cardInner {
   width: 100%;
   height: 100%;
-  border-radius: 8px; /* 少しだけ丸く */
+  border-radius: 8px;
   border: 1px solid var(--py-border);
   background: var(--py-bg-panel);
   overflow: hidden;
   cursor: grab;
+  transition: filter 0.3s;
 }
 
 .cardInner:active {
@@ -204,6 +324,9 @@ body,
   font-weight: 800;
   color: var(--py-accent);
   font-family: var(--font-code);
+  transition:
+    color 0.3s,
+    border-color 0.3s;
 }
 
 .name {
@@ -261,74 +384,5 @@ body,
 }
 
 .card.selected {
-  outline: 2px solid var(--py-accent); /* 選択時は黄色でハイライト */
-}
-
-.codePanel {
-  margin-top: 12px;
-}
-.codeTitle {
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: var(--py-accent);
-  font-family: var(--font-code);
-}
-.codeBox {
-  padding: 12px;
-  border-radius: 6px;
-  background: var(--py-bg-code);
-  border: 1px solid var(--py-border);
-  overflow: auto;
-  font-family: var(--font-code);
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-.enemyWrap {
-  display: grid;
-  place-items: center;
-  gap: 10px;
-}
-
-.enemyName {
-  letter-spacing: 0.14em;
-  color: var(--py-text-muted);
-  font-weight: 700;
-  font-family: var(--font-code);
-}
-
-.enemySprite {
-  color: rgba(220, 220, 220, 0.9);
-  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.35));
-}
-
-.codeBox {
-  padding: 12px;
-  border-radius: 6px;
-  background: var(--py-bg-code);
-  border: 1px solid var(--py-border);
-  overflow: auto;
-  font-family: var(--font-code);
-  font-size: 13px;
-  line-height: 1.5;
-  display: flex;
-  flex-direction: column;
-}
-
-.codeLine {
-  padding: 2px 6px;
-  border-radius: 4px;
-  white-space: pre; /* インデントをそのまま保持する */
-  min-height: 20px; /* 空行の高さを確保 */
-  transition:
-    background-color 0.2s,
-    color 0.2s;
-  color: var(--py-text-main);
-}
-
-.codeLine.active {
-  /* アクティブな行をイエローの半透明背景でハイライト */
-  background-color: rgba(194, 201, 125, 0.15);
-  color: var(--py-accent);
-  font-weight: bold;
+  outline: 2px solid var(--py-accent);
 }
