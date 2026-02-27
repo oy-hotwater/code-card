@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import type { Card, CardId } from "./types";
 import { makeStarterDeck } from "./cards";
 import type { TrojanHorseState } from "../ui/components/TrojanHorseIcon";
@@ -49,19 +49,8 @@ export function useGame() {
 
   const isExecuting = executingCard !== null;
 
-  // 初期化：デッキをシャッフルして4枚ドロー
-  useEffect(() => {
-    const initialDeck = shuffle(makeStarterDeck());
-    const initialHand = initialDeck.splice(0, 4); // 先頭から4枚引く
-    setCards({
-      deck: initialDeck,
-      hand: initialHand,
-      discard: [],
-    });
-  }, []);
-
-  // ドロー機能
-  function drawCards(amount: number) {
+  // ドロー機能 (useEffect内でも呼べるようにuseCallbackでラップ)
+  const drawCards = useCallback((amount: number) => {
     setCards((prev) => {
       let currentDeck = [...prev.deck];
       let currentDiscard = [...prev.discard];
@@ -81,7 +70,18 @@ export function useGame() {
 
       return { deck: currentDeck, hand: currentHand, discard: currentDiscard };
     });
-  }
+  }, []);
+
+  // 初期化：デッキをシャッフルして4枚ドロー
+  useEffect(() => {
+    const initialDeck = shuffle(makeStarterDeck());
+    const initialHand = initialDeck.splice(0, 4); // 先頭から4枚引く
+    setCards({
+      deck: initialDeck,
+      hand: initialHand,
+      discard: [],
+    });
+  }, []);
 
   function playCard(cardId: CardId) {
     if (isExecuting || turn !== "player") return;
@@ -134,6 +134,12 @@ export function useGame() {
         setPlayerHp((hp) => Math.max(0, hp + line.playerHpDelta!));
       if (line.playerBlockDelta)
         setPlayerBlock((block) => block + line.playerBlockDelta!);
+
+      // 【新規追加】ドロー効果の処理
+      if (line.playerDrawDelta) {
+        drawCards(line.playerDrawDelta);
+      }
+
       if (line.animTrigger) {
         setEnemyAnimState(line.animTrigger as TrojanHorseState);
       }
@@ -142,7 +148,7 @@ export function useGame() {
     }, 800);
 
     return () => clearTimeout(timer);
-  }, [executingCard, currentLineIndex]);
+  }, [executingCard, currentLineIndex, drawCards]);
 
   // プレイヤーのターン終了
   function endTurn() {
@@ -208,7 +214,7 @@ export function useGame() {
       clearTimeout(timer2);
       clearTimeout(timer3);
     };
-  }, [turn, maxEnergy]);
+  }, [turn, maxEnergy, drawCards]);
 
   return {
     cards, // まとめたStateを返す

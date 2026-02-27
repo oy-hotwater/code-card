@@ -9,6 +9,7 @@ export type CodeLine = {
   enemyHpDelta?: number; // 敵へのダメージ (マイナス値)
   playerHpDelta?: number; // プレイヤーの回復・ダメージ
   playerBlockDelta?: number; // プレイヤーの防御力（ブロック）の増減
+  playerDrawDelta?: number; // 【新規】山札からカードを引く枚数
   animTrigger?: string; // 敵のアニメーション(TrojanHorseState)を発火させるトリガー
 };
 
