@@ -8,7 +8,7 @@ type Props = {
   onAnimationComplete?: (state: TrojanHorseState) => void;
 };
 
-// 状態ごとのアニメーション定義（サイバーパンク風の光と動き）
+// 状態ごとのアニメーション定義（メリハリをつけて区別しやすくする）
 const horseVariants: Variants = {
   enter: {
     x: 200,
@@ -31,30 +31,31 @@ const horseVariants: Variants = {
     },
   },
   attack: {
-    x: [0, 50, -180, 0], // チャージしてからの高速突進
-    y: [0, -10, 5, 0],
-    rotate: [0, 12, -8, 0],
-    scale: [1, 0.95, 1.15, 1],
+    // 【攻撃モーション】左(プレイヤー側)へ鋭く突進しつつ、大きくズームして迫力を見せる
+    x: [0, -160, 0],
+    y: [0, 40, 0], // 少し下に下げることで手前に迫る立体感を出す
+    rotate: [0, -10, 0], // 少しだけ前傾姿勢
+    scale: [1, 1.7, 1], // グッと大きくしてズーム感を出す
     transition: {
-      duration: 0.7,
-      times: [0, 0.3, 0.7, 1],
-      ease: "anticipate", // よりメカニカルで鋭い動き
+      duration: 0.5,
+      times: [0, 0.5, 1],
+      ease: "anticipate", // 鋭い動きを演出
     },
   },
   damage: {
-    // グリッチ風に細かく激しくブレる
-    x: [0, 15, -15, 10, -10, 5, 0],
-    y: [0, -5, 5, -5, 5, 0],
-    rotate: [0, 3, -4, 5, -2, 0],
+    // 【被弾モーション】ダメージを受けて少し後ろへのけぞる（過度な倒れ込みを抑制）
+    x: [0, 30, 10, 0],
+    y: [0, -15, -5, 0],
+    rotate: [0, 12, 5, 0], // 倒れる角度を抑える
     filter: [
       "drop-shadow(0px 15px 25px rgba(0, 243, 255, 0.2)) brightness(1)",
-      // エラーを表現する赤いフラッシュと色相の乱れ
-      "drop-shadow(0px 0px 40px rgba(255, 0, 60, 1)) brightness(2) saturate(3) hue-rotate(45deg)",
+      // 赤く激しくフラッシュさせる
+      "drop-shadow(0px 0px 40px rgba(255, 0, 60, 1)) brightness(2.5) hue-rotate(-20deg)",
       "drop-shadow(0px 15px 25px rgba(0, 243, 255, 0.2)) brightness(1)",
     ],
     transition: {
-      duration: 0.4,
-      ease: "linear",
+      duration: 0.5,
+      ease: "easeOut",
     },
   },
   exit: {
