@@ -25,7 +25,9 @@ export default function App() {
         />
 
         <Hand
-          cards={game.hand}
+          cards={game.cards.hand}
+          deckCount={game.cards.deck.length}
+          discardCount={game.cards.discard.length}
           turn={game.turn}
           energy={game.energy}
           draggingId={game.draggingId}
