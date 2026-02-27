@@ -7,7 +7,7 @@ type Props = {
   baseX: number;
   baseY: number;
   baseRotate: number;
-  isPlayable: boolean; // 新規追加
+  isPlayable: boolean;
   isDragging: boolean;
   setDragging: (v: boolean) => void;
   onDropToPlayZone: () => void;
@@ -41,9 +41,9 @@ export function CardView({
   const dragX = useMotionValue(0);
   const dragY = useMotionValue(0);
 
+  // 内側のカード（見た目）を動かすためのY軸オフセット
   const liftY = useMemo(() => {
     if (isDragging) return 0;
-    // プレイ不可な状態でもホバーはできるようにするが、少し控えめに上げる
     return hovered && !isExecuting ? -120 : 0;
   }, [hovered, isDragging, isExecuting]);
 
@@ -71,16 +71,21 @@ export function CardView({
   }
 
   return (
+    /* ① 外側のラッパー要素
+      ・扇状の「元の位置」を保持する
+      ・マウスのホバー判定を受け止める（カードが上に逃げてもここは動かない）
+    */
     <motion.div
-      className={`card ${rarityClass(card.rarity)} ${isDragging ? "dragging" : ""} ${selected ? "selected" : ""} ${!isPlayable ? "disabled" : ""}`}
       style={{
+        position: "absolute",
+        width: 170, // .card クラスと同じサイズ
+        height: 240, // .card クラスと同じサイズ
+        transformOrigin: "50% 100%",
         x: baseX,
         y: baseY,
-        rotate,
+        rotate: rotate,
         zIndex: isDragging ? 50 : hovered ? 20 : 1,
       }}
-      animate={{ y: baseY + liftY, scale }}
-      transition={{ type: "spring", stiffness: 500, damping: 35 }}
       onMouseEnter={() => {
         if (!isExecuting) {
           setHovered(true);
@@ -89,29 +94,42 @@ export function CardView({
       }}
       onMouseLeave={() => setHovered(false)}
     >
+      {/* ② 内側のカード本体
+      ・ラッパーの内部で、ホバー状態に応じて「見た目だけ」が上に移動する */}
       <motion.div
-        className="cardInner"
-        drag={!isExecuting && isPlayable} // 実行中またはコスト不足・敵ターンならドラッグ無効
-        dragMomentum={false}
-        dragElastic={0.15}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        style={{ x: dragX, y: dragY }}
+        className={`card ${rarityClass(card.rarity)} ${isDragging ? "dragging" : ""} ${selected ? "selected" : ""} ${!isPlayable ? "disabled" : ""}`}
+        style={{
+          // 親ラッパーに追従するため、相対的な位置をゼロにリセット
+          top: 0,
+          left: 0,
+        }}
+        animate={{ y: liftY, scale }}
+        transition={{ type: "spring", stiffness: 500, damping: 35 }}
       >
-        <div className="cardTop">
-          <div className="cost">{card.cost}</div>
-          <div className="name">{card.name}</div>
-        </div>
+        <motion.div
+          className="cardInner"
+          drag={!isExecuting && isPlayable}
+          dragMomentum={false}
+          dragElastic={0.15}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          style={{ x: dragX, y: dragY }}
+        >
+          <div className="cardTop">
+            <div className="cost">{card.cost}</div>
+            <div className="name">{card.name}</div>
+          </div>
 
-        <div className="art">
-          <div className="artDummy">{card.kind.toUpperCase()}</div>
-        </div>
+          <div className="art">
+            <div className="artDummy">{card.kind.toUpperCase()}</div>
+          </div>
 
-        <div className="text">{card.text}</div>
+          <div className="text">{card.text}</div>
 
-        <div className="cardBottom">
-          <span className="pill">{card.rarity}</span>
-        </div>
+          <div className="cardBottom">
+            <span className="pill">{card.rarity}</span>
+          </div>
+        </motion.div>
       </motion.div>
     </motion.div>
   );
