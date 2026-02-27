@@ -3,12 +3,31 @@ import type { Card, CardId } from "./types";
 import { makeStarterDeck } from "./cards";
 import type { TrojanHorseState } from "../ui/components/TrojanHorseIcon";
 
+// シャッフル用ユーティリティ関数
+function shuffle<T>(array: T[]): T[] {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
+
 export function useGame() {
-  const [hand, setHand] = useState<Card[]>([]);
+  // 山札・手札・捨て札をまとめて管理
+  const [cards, setCards] = useState<{
+    deck: Card[];
+    hand: Card[];
+    discard: Card[];
+  }>({
+    deck: [],
+    hand: [],
+    discard: [],
+  });
+
   const [enemyHp, setEnemyHp] = useState(40);
   const [playerHp, setPlayerHp] = useState(50);
 
-  // ターンとリソースの管理
   const [turn, setTurn] = useState<"player" | "enemy">("player");
   const [energy, setEnergy] = useState(3);
   const [maxEnergy, setMaxEnergy] = useState(3);
@@ -19,11 +38,10 @@ export function useGame() {
 
   const [selectedId, setSelectedId] = useState<CardId | null>(null);
   const selectedCard = useMemo(
-    () => hand.find((c) => c.id === selectedId) ?? null,
-    [hand, selectedId],
+    () => cards.hand.find((c) => c.id === selectedId) ?? null,
+    [cards.hand, selectedId],
   );
 
-  // --- 実行ステート ---
   const [executingCard, setExecutingCard] = useState<Card | null>(null);
   const [currentLineIndex, setCurrentLineIndex] = useState<number>(-1);
   const [enemyAnimState, setEnemyAnimState] =
@@ -31,18 +49,46 @@ export function useGame() {
 
   const isExecuting = executingCard !== null;
 
-  // 初期化（手札を配る）
+  // 初期化：デッキをシャッフルして4枚ドロー
   useEffect(() => {
-    setHand(makeStarterDeck());
+    const initialDeck = shuffle(makeStarterDeck());
+    const initialHand = initialDeck.splice(0, 4); // 先頭から4枚引く
+    setCards({
+      deck: initialDeck,
+      hand: initialHand,
+      discard: [],
+    });
   }, []);
+
+  // ドロー機能
+  function drawCards(amount: number) {
+    setCards((prev) => {
+      let currentDeck = [...prev.deck];
+      let currentDiscard = [...prev.discard];
+      const currentHand = [...prev.hand];
+
+      for (let i = 0; i < amount; i++) {
+        if (currentDeck.length === 0) {
+          if (currentDiscard.length === 0) break; // デッキも捨て札も空なら終了
+          // 捨て札をシャッフルして山札に戻す
+          currentDeck = shuffle(currentDiscard);
+          currentDiscard = [];
+          setLastLog((log) => `${log} (Deck reshuffled!)`);
+        }
+        const drawnCard = currentDeck.shift();
+        if (drawnCard) currentHand.push(drawnCard);
+      }
+
+      return { deck: currentDeck, hand: currentHand, discard: currentDiscard };
+    });
+  }
 
   function playCard(cardId: CardId) {
     if (isExecuting || turn !== "player") return;
 
-    const card = hand.find((c) => c.id === cardId);
+    const card = cards.hand.find((c) => c.id === cardId);
     if (!card) return;
 
-    // コストチェック
     if (energy < card.cost) {
       setLastLog(
         `エネルギーが足りません (Cost: ${card.cost}, Energy: ${energy})`,
@@ -50,20 +96,22 @@ export function useGame() {
       return;
     }
 
-    // コスト消費と手札からの削除
     setEnergy((prev) => prev - card.cost);
-    setHand((prev) => prev.filter((c) => c.id !== cardId));
 
-    if (selectedId === cardId) {
-      setSelectedId(null);
-    }
+    // 手札から取り除き、捨て札（Discard）に追加する
+    setCards((prev) => ({
+      ...prev,
+      hand: prev.hand.filter((c) => c.id !== cardId),
+      discard: [...prev.discard, card],
+    }));
 
-    // 実行フェーズの開始
+    if (selectedId === cardId) setSelectedId(null);
+
     setExecutingCard(card);
     setCurrentLineIndex(0);
   }
 
-  // --- ステップ実行ロジック ---
+  // ステップ実行ロジック
   useEffect(() => {
     if (!executingCard) return;
 
@@ -71,7 +119,6 @@ export function useGame() {
       const timer = setTimeout(() => {
         setExecutingCard(null);
         setCurrentLineIndex(-1);
-        setLastLog("コードの実行が完了しました。");
         setEnemyAnimState("idle");
       }, 1000);
       return () => clearTimeout(timer);
@@ -97,28 +144,32 @@ export function useGame() {
     return () => clearTimeout(timer);
   }, [executingCard, currentLineIndex]);
 
-  // --- 敵のターン制御 ---
+  // プレイヤーのターン終了
   function endTurn() {
     if (isExecuting || turn !== "player") return;
     setTurn("enemy");
-    setLastLog("ターン終了。敵の行動中...");
+    setLastLog("ターン終了。残った手札を捨て札へ送ります...");
     setSelectedId(null);
+
+    // 手札に残ったカードをすべて捨て札に送る
+    setCards((prev) => ({
+      deck: prev.deck,
+      hand: [],
+      discard: [...prev.discard, ...prev.hand],
+    }));
   }
 
+  // 敵のターン制御
   useEffect(() => {
     if (turn !== "enemy") return;
 
-    // 敵のアクションシーケンス（簡略版）
     const timer1 = setTimeout(() => {
       setEnemyAnimState("attack");
       setLastLog("TrojanHorse.execute('attack')");
     }, 1000);
 
     const timer2 = setTimeout(() => {
-      const damage = 8; // 敵の固定攻撃力
-      setLastLog(`Enemy dealt ${damage} damage!`);
-
-      // ブロックでダメージを軽減する処理
+      const damage = 8;
       setPlayerBlock((currentBlock) => {
         let remainingDamage = damage;
         let newBlock = currentBlock;
@@ -137,6 +188,7 @@ export function useGame() {
 
         if (remainingDamage > 0) {
           setPlayerHp((hp) => Math.max(0, hp - remainingDamage));
+          if (currentBlock === 0) setLastLog(`Enemy dealt ${damage} damage!`);
         }
         return newBlock;
       });
@@ -146,11 +198,9 @@ export function useGame() {
       setEnemyAnimState("idle");
       setTurn("player");
       setEnergy(maxEnergy);
-      setPlayerBlock(0); // ターン開始時にブロックは消滅
-      setLastLog("Your turn. (Energy Restored)");
-
-      // デッキがないので簡易的に手札が0なら補充
-      setHand((prev) => (prev.length === 0 ? makeStarterDeck() : prev));
+      setPlayerBlock(0);
+      setLastLog("Your turn. Draw 4 cards.");
+      drawCards(4); // ターン開始時に4枚ドロー
     }, 3000);
 
     return () => {
@@ -161,7 +211,7 @@ export function useGame() {
   }, [turn, maxEnergy]);
 
   return {
-    hand,
+    cards, // まとめたStateを返す
     enemyHp,
     playerHp,
     turn,
@@ -176,8 +226,6 @@ export function useGame() {
     selectedId,
     setSelectedId,
     selectedCard,
-
-    // UI制御用
     isExecuting,
     executingCard,
     currentLineIndex,
