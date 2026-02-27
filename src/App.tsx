@@ -11,6 +11,10 @@ export default function App() {
         <BattleBoard
           enemyHp={game.enemyHp}
           playerHp={game.playerHp}
+          turn={game.turn}
+          energy={game.energy}
+          maxEnergy={game.maxEnergy}
+          playerBlock={game.playerBlock}
           lastLog={game.lastLog}
           onEndTurn={game.endTurn}
           selectedCard={game.selectedCard}
@@ -22,6 +26,8 @@ export default function App() {
 
         <Hand
           cards={game.hand}
+          turn={game.turn}
+          energy={game.energy}
           draggingId={game.draggingId}
           setDraggingId={game.setDraggingId}
           onPlayCard={game.playCard}

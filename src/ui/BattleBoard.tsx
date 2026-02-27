@@ -6,6 +6,10 @@ import TrojanHorseIcon, {
 type Props = {
   enemyHp: number;
   playerHp: number;
+  turn: "player" | "enemy";
+  energy: number;
+  maxEnergy: number;
+  playerBlock: number;
   lastLog: string;
   onEndTurn: () => void;
   selectedCard: Card | null;
@@ -18,6 +22,10 @@ type Props = {
 export function BattleBoard({
   enemyHp,
   playerHp,
+  turn,
+  energy,
+  maxEnergy,
+  playerBlock,
   lastLog,
   onEndTurn,
   selectedCard,
@@ -26,8 +34,10 @@ export function BattleBoard({
   enemyAnimState,
   setEnemyAnimState,
 }: Props) {
+  const isPlayerTurn = turn === "player";
+
   const handleEnemyClick = () => {
-    if (executingCard) return; // 実行中はお遊びモーションを無効化
+    if (executingCard) return;
     if (enemyAnimState !== "idle") return;
     const actions: TrojanHorseState[] = ["attack", "damage", "exit"];
     const randomAction = actions[Math.floor(Math.random() * actions.length)];
@@ -37,10 +47,27 @@ export function BattleBoard({
   return (
     <div className="board">
       <div className="hud">
+        <div
+          className="turnIndicator"
+          style={{ color: isPlayerTurn ? "var(--py-accent)" : "#ff4a4a" }}
+        >
+          {isPlayerTurn ? "▶ Player Turn" : "▶ Enemy Turn"}
+        </div>
+
         <div className="hpRow">
           <div className="hpBox">
-            <div className="hpLabel">Player</div>
-            <div className="hpValue">{playerHp} HP</div>
+            <div className="hpLabel">
+              Player (Energy: {energy}/{maxEnergy})
+            </div>
+            <div
+              className="hpValue"
+              style={{ display: "flex", alignItems: "center", gap: "8px" }}
+            >
+              <span>{playerHp} HP</span>
+              {playerBlock > 0 && (
+                <span className="blockBadge">🛡️ {playerBlock}</span>
+              )}
+            </div>
           </div>
           <div className="hpBox">
             <div className="hpLabel">Enemy</div>
@@ -50,7 +77,11 @@ export function BattleBoard({
 
         <div className="log">{lastLog}</div>
 
-        <button className="endTurnBtn" onClick={onEndTurn}>
+        <button
+          className="endTurnBtn"
+          onClick={onEndTurn}
+          disabled={!isPlayerTurn || executingCard !== null}
+        >
           End Turn
         </button>
       </div>
@@ -62,12 +93,10 @@ export function BattleBoard({
             className="enemySprite"
             onClick={handleEnemyClick}
             style={{ cursor: executingCard ? "default" : "pointer" }}
-            title={executingCard ? "" : "クリックでモーションをテスト"}
           >
             <TrojanHorseIcon
               state={enemyAnimState}
               onAnimationComplete={(completedState) => {
-                // 自動でidle等に戻す処理
                 if (
                   completedState === "attack" ||
                   completedState === "damage" ||
@@ -89,15 +118,21 @@ export function BattleBoard({
             ? `Executing: ${executingCard.name}`
             : selectedCard
               ? `Code: ${selectedCard.name}`
-              : "Code"}
+              : "Code Explorer"}
         </div>
 
-        {/* コードを1行ずつレンダリングしてハイライトを当てる */}
         <div className="codeBox">
           {(() => {
             const cardToDisplay = executingCard || selectedCard;
             if (!cardToDisplay) {
-              return <div className="codeLine">カードを選んでコードを表示</div>;
+              return (
+                <div
+                  className="codeLine"
+                  style={{ color: "var(--py-text-muted)" }}
+                >
+                  カードにホバーしてコードを表示
+                </div>
+              );
             }
 
             return cardToDisplay.codeLines.map((line, i) => {

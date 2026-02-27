@@ -8,6 +8,7 @@ export type CodeLine = {
   log?: string; // この行を実行した時に出力するログ
   enemyHpDelta?: number; // 敵へのダメージ (マイナス値)
   playerHpDelta?: number; // プレイヤーの回復・ダメージ
+  playerBlockDelta?: number; // プレイヤーの防御力（ブロック）の増減
   animTrigger?: string; // 敵のアニメーション(TrojanHorseState)を発火させるトリガー
 };
 

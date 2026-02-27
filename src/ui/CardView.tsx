@@ -7,6 +7,7 @@ type Props = {
   baseX: number;
   baseY: number;
   baseRotate: number;
+  isPlayable: boolean; // 新規追加
   isDragging: boolean;
   setDragging: (v: boolean) => void;
   onDropToPlayZone: () => void;
@@ -27,6 +28,7 @@ export function CardView({
   baseX,
   baseY,
   baseRotate,
+  isPlayable,
   isDragging,
   setDragging,
   onDropToPlayZone,
@@ -36,33 +38,33 @@ export function CardView({
 }: Props) {
   const [hovered, setHovered] = useState(false);
 
-  // drag中の位置
   const dragX = useMotionValue(0);
   const dragY = useMotionValue(0);
 
   const liftY = useMemo(() => {
     if (isDragging) return 0;
-    return hovered && !isExecuting ? -120 : 0; // 実行中は持ち上げない
+    // プレイ不可な状態でもホバーはできるようにするが、少し控えめに上げる
+    return hovered && !isExecuting ? -120 : 0;
   }, [hovered, isDragging, isExecuting]);
 
-  // 実行中かつドラッグ中でない場合はスケールアップを抑制
   const scale = isDragging ? 1.08 : hovered && !isExecuting ? 1.18 : 1.0;
   const rotate = isDragging ? 0 : baseRotate;
 
   function handleDragStart() {
-    if (isExecuting) return; // 念のため
+    if (isExecuting || !isPlayable) return;
     setDragging(true);
     setHovered(false);
   }
 
   function handleDragEnd() {
+    if (!isPlayable) return;
+
     const y = dragY.get();
     const x = dragX.get();
     const played = y < -140 && Math.abs(x) < 260;
 
     if (played && !isExecuting) onDropToPlayZone();
 
-    // 位置を戻す（手札位置へスナップ）
     dragX.set(0);
     dragY.set(0);
     setDragging(false);
@@ -70,7 +72,7 @@ export function CardView({
 
   return (
     <motion.div
-      className={`card ${rarityClass(card.rarity)} ${isDragging ? "dragging" : ""} ${selected ? "selected" : ""}`}
+      className={`card ${rarityClass(card.rarity)} ${isDragging ? "dragging" : ""} ${selected ? "selected" : ""} ${!isPlayable ? "disabled" : ""}`}
       style={{
         x: baseX,
         y: baseY,
@@ -89,7 +91,7 @@ export function CardView({
     >
       <motion.div
         className="cardInner"
-        drag={!isExecuting} // ★ 実行中はドラッグを無効化
+        drag={!isExecuting && isPlayable} // 実行中またはコスト不足・敵ターンならドラッグ無効
         dragMomentum={false}
         dragElastic={0.15}
         onDragStart={handleDragStart}
