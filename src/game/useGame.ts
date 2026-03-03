@@ -30,7 +30,7 @@ export function useGame() {
 
   const [turn, setTurn] = useState<"player" | "enemy">("player");
   const [energy, setEnergy] = useState(3);
-  const [maxEnergy, setMaxEnergy] = useState(3);
+  const maxEnergy = 3;
   const [playerBlock, setPlayerBlock] = useState(0);
 
   const [lastLog, setLastLog] = useState("Battle Start! Your turn.");
