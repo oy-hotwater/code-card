@@ -1,10 +1,10 @@
 # code-card
 
-## デモプレイ / demo play
+## ライブデモ / Live Demo
 
-Live Demo: [https://code-card-lg9s.vercel.app/]
+Live Demo: [https://code-card-lg9s.vercel.app/](https://code-card-lg9s.vercel.app/)
 
-## デモ映像 / demo movies
+## デモ映像 / Demo Movies
 
 2026-02-27: Framer Motionを適応したUIへの変更結果。カードコンポーネント実装、Pythonコード実行、敵の挙動反映を実装。カードをドラッグすると、パネルでPythonコードが1行ずつハイライトされ、それに対応して敵のHPが減少する「ステップ実行」の様子。
 
