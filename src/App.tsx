@@ -10,7 +10,9 @@ export default function App() {
       <div className="stage">
         <BattleBoard
           enemyHp={game.enemyHp}
+          maxEnemyHp={game.maxEnemyHp}
           playerHp={game.playerHp}
+          maxPlayerHp={game.maxPlayerHp}
           turn={game.turn}
           energy={game.energy}
           maxEnergy={game.maxEnergy}

@@ -85,9 +85,16 @@ body,
   border: 1px solid var(--py-border);
   border-radius: 6px;
   padding: 8px 12px;
-  display: flex; /* ラベルと数値を左右に振り分け */
+  display: flex;
+  flex-direction: column; /* 縦並びに変更 */
+  gap: 8px;
+}
+
+.hpHeader {
+  display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 
 .hpLabel {
@@ -97,10 +104,36 @@ body,
 }
 
 .hpValue {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
-  color: var(--py-accent);
+  color: var(--py-text-main);
   font-family: var(--font-code);
+}
+
+/* HPバー関連スタイル */
+.hpBarContainer {
+  width: 100%;
+  height: 6px;
+  background: var(--py-bg-code);
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.hpBarFill {
+  height: 100%;
+  transition: width 0.3s ease-out;
+  border-radius: 3px;
+}
+
+.hpBarFill.player {
+  background: var(--py-accent);
+  box-shadow: 0 0 5px rgba(194, 201, 125, 0.5);
+}
+
+.hpBarFill.enemy {
+  background: #ff4a4a;
+  box-shadow: 0 0 5px rgba(255, 74, 74, 0.5);
 }
 
 .blockBadge {

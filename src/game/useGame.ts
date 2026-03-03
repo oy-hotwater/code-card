@@ -25,8 +25,12 @@ export function useGame() {
     discard: [],
   });
 
-  const [enemyHp, setEnemyHp] = useState(40);
-  const [playerHp, setPlayerHp] = useState(50);
+  // HPの最大値を定義
+  const maxPlayerHp = 50;
+  const maxEnemyHp = 40;
+
+  const [enemyHp, setEnemyHp] = useState(maxEnemyHp);
+  const [playerHp, setPlayerHp] = useState(maxPlayerHp);
 
   const [turn, setTurn] = useState<"player" | "enemy">("player");
   const [energy, setEnergy] = useState(3);
@@ -128,14 +132,23 @@ export function useGame() {
       const line = executingCard.codeLines[currentLineIndex];
 
       if (line.log) setLastLog(line.log);
-      if (line.enemyHpDelta)
-        setEnemyHp((hp) => Math.max(0, hp + line.enemyHpDelta!));
-      if (line.playerHpDelta)
-        setPlayerHp((hp) => Math.max(0, hp + line.playerHpDelta!));
-      if (line.playerBlockDelta)
-        setPlayerBlock((block) => block + line.playerBlockDelta!);
 
-      // 【新規追加】ドロー効果の処理
+      // HP増減時、上限(maxHp)を超えず、下限(0)を下回らないように制御
+      if (line.enemyHpDelta) {
+        setEnemyHp((hp) =>
+          Math.min(maxEnemyHp, Math.max(0, hp + line.enemyHpDelta!)),
+        );
+      }
+      if (line.playerHpDelta) {
+        setPlayerHp((hp) =>
+          Math.min(maxPlayerHp, Math.max(0, hp + line.playerHpDelta!)),
+        );
+      }
+      if (line.playerBlockDelta) {
+        setPlayerBlock((block) => block + line.playerBlockDelta!);
+      }
+
+      // ドロー効果の処理
       if (line.playerDrawDelta) {
         drawCards(line.playerDrawDelta);
       }
@@ -193,6 +206,7 @@ export function useGame() {
         }
 
         if (remainingDamage > 0) {
+          // ダメージ処理。下限は0。
           setPlayerHp((hp) => Math.max(0, hp - remainingDamage));
           if (currentBlock === 0) setLastLog(`Enemy dealt ${damage} damage!`);
         }
@@ -219,7 +233,9 @@ export function useGame() {
   return {
     cards, // まとめたStateを返す
     enemyHp,
+    maxEnemyHp, // 上限値を公開
     playerHp,
+    maxPlayerHp, // 上限値を公開
     turn,
     energy,
     maxEnergy,

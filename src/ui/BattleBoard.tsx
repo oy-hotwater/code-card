@@ -5,7 +5,9 @@ import TrojanHorseIcon, {
 
 type Props = {
   enemyHp: number;
+  maxEnemyHp: number;
   playerHp: number;
+  maxPlayerHp: number;
   turn: "player" | "enemy";
   energy: number;
   maxEnergy: number;
@@ -21,7 +23,9 @@ type Props = {
 
 export function BattleBoard({
   enemyHp,
+  maxEnemyHp,
   playerHp,
+  maxPlayerHp,
   turn,
   energy,
   maxEnergy,
@@ -44,6 +48,16 @@ export function BattleBoard({
     setEnemyAnimState(randomAction);
   };
 
+  // HPバーの割合を計算 (0% ~ 100%)
+  const playerHpPercent = Math.max(
+    0,
+    Math.min(100, (playerHp / maxPlayerHp) * 100),
+  );
+  const enemyHpPercent = Math.max(
+    0,
+    Math.min(100, (enemyHp / maxEnemyHp) * 100),
+  );
+
   return (
     <div className="board">
       <div className="hud">
@@ -55,23 +69,46 @@ export function BattleBoard({
         </div>
 
         <div className="hpRow">
+          {/* Player HP */}
           <div className="hpBox">
-            <div className="hpLabel">
-              Player (Energy: {energy}/{maxEnergy})
+            <div className="hpHeader">
+              <div className="hpLabel">
+                Player (Energy: {energy}/{maxEnergy})
+              </div>
+              <div
+                className="hpValue"
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              >
+                <span>
+                  {playerHp} / {maxPlayerHp} HP
+                </span>
+                {playerBlock > 0 && (
+                  <span className="blockBadge">🛡️ {playerBlock}</span>
+                )}
+              </div>
             </div>
-            <div
-              className="hpValue"
-              style={{ display: "flex", alignItems: "center", gap: "8px" }}
-            >
-              <span>{playerHp} HP</span>
-              {playerBlock > 0 && (
-                <span className="blockBadge">🛡️ {playerBlock}</span>
-              )}
+            <div className="hpBarContainer">
+              <div
+                className="hpBarFill player"
+                style={{ width: `${playerHpPercent}%` }}
+              />
             </div>
           </div>
+
+          {/* Enemy HP */}
           <div className="hpBox">
-            <div className="hpLabel">Enemy</div>
-            <div className="hpValue">{enemyHp} HP</div>
+            <div className="hpHeader">
+              <div className="hpLabel">Enemy</div>
+              <div className="hpValue">
+                {enemyHp} / {maxEnemyHp} HP
+              </div>
+            </div>
+            <div className="hpBarContainer">
+              <div
+                className="hpBarFill enemy"
+                style={{ width: `${enemyHpPercent}%` }}
+              />
+            </div>
           </div>
         </div>
 
