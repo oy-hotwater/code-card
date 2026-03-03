@@ -42,6 +42,7 @@ body,
   display: grid;
   /* 1frだと中身の高さで伸びてしまうため minmax(0, 1fr) で領域を固定 */
   grid-template-rows: minmax(0, 1fr) auto;
+  position: relative;
 }
 
 .board {
@@ -418,4 +419,163 @@ body,
 
 .card.selected {
   outline: 2px solid var(--py-accent);
+}
+
+/* =========================================
+   Boot Screen (タイトル画面)
+   ========================================= */
+.bootScreen {
+  width: 100%;
+  height: 100%;
+  background: #0a0e14;
+  color: #0ea5e9;
+  font-family: var(--font-code);
+  padding: 40px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.bootLogs {
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+.titleContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: -100px; /* ログの上に少し被る感じで中央配置 */
+}
+
+.gameTitle {
+  font-size: clamp(24px, 5vw, 48px);
+  margin-bottom: 24px;
+  color: var(--py-text-main);
+}
+.gameTitle .keyword {
+  color: #c678dd; /* Pythonのdef色っぽく */
+}
+.gameTitle .functionName {
+  color: #61afef;
+}
+
+.pressAnyKey {
+  font-size: 18px;
+  color: var(--py-accent);
+}
+
+/* =========================================
+   Dashboard (メインメニュー)
+   ========================================= */
+.dashboardScreen {
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.dashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--py-border);
+  padding-bottom: 12px;
+  font-family: var(--font-code);
+}
+
+.headerTitle {
+  color: var(--py-text-muted);
+}
+
+.statusOk {
+  color: #10b981;
+  font-weight: bold;
+}
+
+.dashboardMenu {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.menuItem {
+  background: var(--py-bg-panel);
+  border: 1px solid var(--py-border);
+  border-radius: 8px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--py-text-main);
+  outline: none;
+}
+
+.menuItem.executeBtn {
+  border-color: var(--py-accent);
+  background: rgba(194, 201, 125, 0.05);
+}
+.menuItem.executeBtn .menuIcon {
+  color: var(--py-accent);
+}
+
+.menuItem.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.menuIcon {
+  font-size: 24px;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  background: var(--py-bg-code);
+  border-radius: 8px;
+  color: var(--py-text-muted);
+}
+
+.menuTitle {
+  font-family: var(--font-code);
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.menuDesc {
+  font-size: 13px;
+  color: var(--py-text-muted);
+}
+
+/* =========================================
+   Battle Exit Button (バトル中断ボタン)
+   ========================================= */
+.abortBtn {
+  position: absolute;
+  top: 18px;
+  left: 330px; /* HUDの横に配置 */
+  z-index: 50;
+  background: var(--py-bg-panel);
+  border: 1px solid var(--py-border);
+  color: var(--py-text-muted);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-family: var(--font-code);
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.abortBtn:hover {
+  background: #ff4a4a;
+  color: white;
+  border-color: #ff4a4a;
 }
