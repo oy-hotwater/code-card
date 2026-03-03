@@ -42,17 +42,33 @@ export function BootScreen({ onComplete }: Props) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className="gameTitle">
-            <span className="keyword">def</span>{" "}
-            <span className="functionName">virus_defender</span>():
-          </h1>
-          <motion.div
-            className="pressAnyKey"
-            animate={{ opacity: [1, 0, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            Click anywhere to continue_
-          </motion.div>
+          <div className="editorTitleBlock">
+            {/* メインタイトル (関数定義) */}
+            <div className="titleMain">
+              <span className="keyword">def</span>{" "}
+              <span className="functionName">virus_defender</span>():
+            </div>
+
+            {/* 関数内部 (インデントブロック) */}
+            <div className="indentBlock">
+              {/* サブタイトル (コメント) */}
+              <div className="titleSub">
+                <span className="comment"># Coding Card Game</span>
+              </div>
+
+              {/* 指示 (キャレットとプレースホルダー) */}
+              <div className="titleInstruction">
+                <motion.span
+                  className="caret"
+                  animate={{ opacity: [1, 0, 1] }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                >
+                  |
+                </motion.span>
+                <span className="instruction">click and write code here</span>
+              </div>
+            </div>
+          </div>
         </motion.div>
       )}
     </div>

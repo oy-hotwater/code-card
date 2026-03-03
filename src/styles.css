@@ -448,24 +448,75 @@ body,
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: -100px; /* ログの上に少し被る感じで中央配置 */
+  margin-top: -100px;
 }
 
-.gameTitle {
-  font-size: clamp(24px, 5vw, 48px);
-  margin-bottom: 24px;
+/* エディタ風タイトルブロック（大改修） */
+.editorTitleBlock {
+  font-family: var(--font-code);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.titleMain {
+  font-size: clamp(32px, 5vw, 56px);
   color: var(--py-text-main);
+  font-weight: bold;
 }
-.gameTitle .keyword {
-  color: #c678dd; /* Pythonのdef色っぽく */
+
+.titleMain .keyword {
+  color: #c678dd;
 }
-.gameTitle .functionName {
+
+.titleMain .functionName {
   color: #61afef;
 }
 
-.pressAnyKey {
-  font-size: 18px;
+/* インデントブロック（関数の中身であることを強調） */
+.indentBlock {
+  position: relative;
+  padding-left: 48px; /* 深めのインデント */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* インデントのガイドライン（エディタの縦線） */
+.indentBlock::before {
+  content: "";
+  position: absolute;
+  left: 20px; /* def の下あたりに線を引く */
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: rgba(145, 160, 189, 0.2); /* 薄いガイドライン */
+  border-radius: 1px;
+}
+
+.titleSub {
+  font-size: clamp(20px, 3vw, 32px);
+  color: #33ac33;
+  font-style: italic;
+}
+
+.titleInstruction {
+  font-size: clamp(20px, 3vw, 32px);
+  display: flex;
+  align-items: center;
+}
+
+.caret {
   color: var(--py-accent);
+  font-weight: bold;
+  margin-right: 8px;
+  font-size: 1.1em;
+}
+
+.instruction {
+  color: rgba(129, 129, 129, 0.934); /* 非常に薄いプレースホルダー色 */
+  font-style: italic;
 }
 
 /* =========================================
