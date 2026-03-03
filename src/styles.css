@@ -477,7 +477,7 @@ body,
 /* インデントブロック（関数の中身であることを強調） */
 .indentBlock {
   position: relative;
-  padding-left: 48px; /* 深めのインデント */
+  padding-left: 58px; /* 深めのインデント */
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -487,7 +487,7 @@ body,
 .indentBlock::before {
   content: "";
   position: absolute;
-  left: 20px; /* def の下あたりに線を引く */
+  left: 4px;
   top: 0;
   bottom: 0;
   width: 2px;
@@ -498,7 +498,6 @@ body,
 .titleSub {
   font-size: clamp(20px, 3vw, 32px);
   color: #33ac33;
-  font-style: italic;
 }
 
 .titleInstruction {
@@ -508,15 +507,14 @@ body,
 }
 
 .caret {
-  color: var(--py-accent);
+  color: #ffffff;
   font-weight: bold;
-  margin-right: 8px;
+  margin-right: 6px;
   font-size: 1.1em;
 }
 
 .instruction {
   color: rgba(129, 129, 129, 0.934); /* 非常に薄いプレースホルダー色 */
-  font-style: italic;
 }
 
 /* =========================================
