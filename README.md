@@ -6,7 +6,8 @@ Live Demo: [https://code-card-lg9s.vercel.app/](https://code-card-lg9s.vercel.ap
 
 ## デモ映像 / Demo Movies
 
-2026-03-03: タイトル画面とメインメニュー画面を実装。バトル画面でHPバーを実装。
+2026-03-03: タイトル画面とメインメニュー画面を実装。タイトル名を"def virus_defender(): # Coding Card Game"に決定。主人公をvirus_defender()関数に見立て、この関数内に関数のメタファーであるカードたちが入る、というコンセプト。バトル画面でHPバーを実装。
+
 https://github.com/user-attachments/assets/4cf90b07-e368-4921-bef5-7f86edc1d206
 
 <details>
