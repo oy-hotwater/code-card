@@ -6,12 +6,17 @@ Live Demo: [https://code-card-lg9s.vercel.app/](https://code-card-lg9s.vercel.ap
 
 ## デモ映像 / Demo Movies
 
-2026-02-27: Framer Motionを適応したUIへの変更結果。カードコンポーネント実装、Pythonコード実行、敵の挙動反映を実装。カードをドラッグすると、パネルでPythonコードが1行ずつハイライトされ、それに対応して敵のHPが減少する「ステップ実行」の様子。
-
-<video src="https://github.com/user-attachments/assets/928cb9a4-d42a-49d8-ae1b-5de108eaa8d4"></video>
+2026-03-03: タイトル画面とメインメニュー画面を実装。バトル画面でHPバーを実装。
+https://github.com/user-attachments/assets/4cf90b07-e368-4921-bef5-7f86edc1d206
 
 <details>
   <summary>過去のデモ動画を見る（ここをクリック）</summary>
+
+2026-02-27: Framer Motionを適応したUIへの変更結果。カードコンポーネント実装、Pythonコード実行、敵の挙動反映を実装。カードをドラッグすると、パネルでPythonコードが1行ずつハイライトされ、それに対応して敵のHPが減少する「ステップ実行」の様子。
+
+https://github.com/user-attachments/assets/928cb9a4-d42a-49d8-ae1b-5de108eaa8d4
+
+2026-02-22: カードコンポーネントが未実装のひな形。Framer Motionを使っていない状態。Pythonコードの実行が実装されている。
 
 https://github.com/user-attachments/assets/d563a36e-0478-4aea-b632-902792bebbd7
 
