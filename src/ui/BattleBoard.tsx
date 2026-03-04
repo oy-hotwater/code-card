@@ -180,7 +180,7 @@ export function BattleBoard({
 
       <div className="sidePanel">
         {/* Variables Panel (Watch) */}
-        <div className="panelSection" style={{ flexShrink: 0 }}>
+        <div className="panelSection watchSection">
           <div className="sectionTitle">Variables</div>
           <div className="sectionBox">
             <VarRow name="enemy_hp" value={enemyHp} />
@@ -195,7 +195,7 @@ export function BattleBoard({
         </div>
 
         {/* Code Panel */}
-        <div className="panelSection" style={{ flex: 1, minHeight: 0 }}>
+        <div className="panelSection codeSection">
           <div className="sectionTitle">
             {executingCard
               ? `Executing: ${executingCard.name}`
@@ -204,7 +204,7 @@ export function BattleBoard({
                 : "Code Explorer"}
           </div>
 
-          <div className="sectionBox" style={{ height: "100%" }}>
+          <div className="sectionBox codeBox">
             {(() => {
               const cardToDisplay = executingCard || selectedCard;
               if (!cardToDisplay) {

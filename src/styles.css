@@ -203,6 +203,13 @@ body,
 .panelSection {
   display: flex;
   flex-direction: column;
+  flex-shrink: 0; /* デフォルトでは縮まない */
+}
+
+/* ★Code領域が潰れるのを防ぐ重要な指定 */
+.panelSection.codeSection {
+  flex: 1 1 auto;
+  min-height: 150px; /* ここで最低限の高さを確保 */
 }
 
 .sectionTitle {
@@ -218,16 +225,20 @@ body,
   border-radius: 6px;
   background: var(--py-bg-code);
   border: 1px solid var(--py-border);
-  overflow-y: auto; /* 長い場合はスクロール */
   font-family: var(--font-code);
   font-size: 13px;
   line-height: 1.5;
   color: var(--py-text-main);
-  /* FirefoxやChromeのスクロールバーを少し細くする設定 */
+}
+
+/* Codeの中身が溢れたらスクロールさせる */
+.panelSection.codeSection .sectionBox {
+  flex: 1 1 auto;
+  overflow-y: auto;
   scrollbar-width: thin;
 }
 
-/* --- Code Panel --- */
+/* --- Code Panel 内部の装飾 --- */
 .codeLine {
   padding: 2px 6px;
   border-radius: 4px;
@@ -245,7 +256,7 @@ body,
   font-weight: bold;
 }
 
-/* --- Variables Panel --- */
+/* --- Variables Panel 内部の装飾 --- */
 .varRow {
   display: flex;
   align-items: center;
@@ -255,7 +266,7 @@ body,
 }
 
 .varName {
-  color: #61afef; /* 青系（VSCode風の変数色） */
+  color: #61afef; /* 青系（VSCode風） */
 }
 
 .varType {
