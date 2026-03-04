@@ -2,6 +2,7 @@ import type { Card } from "../game/types";
 import TrojanHorseIcon, {
   type TrojanHorseState,
 } from "./components/TrojanHorseIcon";
+import { motion } from "framer-motion";
 
 type Props = {
   enemyHp: number;
@@ -19,7 +20,41 @@ type Props = {
   currentLineIndex: number;
   enemyAnimState: TrojanHorseState;
   setEnemyAnimState: (state: TrojanHorseState) => void;
+  deckCount: number;
+  handCount: number;
+  discardCount: number;
 };
+
+// 変数ウォッチャー用コンポーネント（値が変化した時に光る）
+function VarRow({
+  name,
+  value,
+  type = "int",
+}: {
+  name: string;
+  value: number | string;
+  type?: string;
+}) {
+  return (
+    <div className="varRow">
+      <span className="varName">{name}</span>
+      <span className="varType">: {type}</span>
+      <span style={{ margin: "0 6px", color: "var(--py-text-main)" }}>=</span>
+      <motion.span
+        key={value}
+        initial={{
+          backgroundColor: "rgba(194, 201, 125, 0.8)",
+          color: "#13171f",
+        }}
+        animate={{ backgroundColor: "rgba(0,0,0,0)", color: "#d19a66" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="varValue"
+      >
+        {value}
+      </motion.span>
+    </div>
+  );
+}
 
 export function BattleBoard({
   enemyHp,
@@ -37,16 +72,11 @@ export function BattleBoard({
   currentLineIndex,
   enemyAnimState,
   setEnemyAnimState,
+  deckCount,
+  handCount,
+  discardCount,
 }: Props) {
   const isPlayerTurn = turn === "player";
-
-  const handleEnemyClick = () => {
-    if (executingCard) return;
-    if (enemyAnimState !== "idle") return;
-    const actions: TrojanHorseState[] = ["attack", "damage", "exit"];
-    const randomAction = actions[Math.floor(Math.random() * actions.length)];
-    setEnemyAnimState(randomAction);
-  };
 
   // HPバーの割合を計算 (0% ~ 100%)
   const playerHpPercent = Math.max(
@@ -128,7 +158,6 @@ export function BattleBoard({
           <div className="enemyName">TROJAN</div>
           <div
             className="enemySprite"
-            onClick={handleEnemyClick}
             style={{ cursor: executingCard ? "default" : "pointer" }}
           >
             <TrojanHorseIcon
@@ -149,38 +178,60 @@ export function BattleBoard({
         </div>
       </div>
 
-      <div className="codePanel">
-        <div className="codeTitle">
-          {executingCard
-            ? `Executing: ${executingCard.name}`
-            : selectedCard
-              ? `Code: ${selectedCard.name}`
-              : "Code Explorer"}
+      <div className="sidePanel">
+        {/* Variables Panel (Watch) */}
+        <div className="panelSection" style={{ flexShrink: 0 }}>
+          <div className="sectionTitle">Variables</div>
+          <div className="sectionBox">
+            <VarRow name="enemy_hp" value={enemyHp} />
+            <VarRow name="player_hp" value={playerHp} />
+            <VarRow name="player_block" value={playerBlock} />
+            <VarRow name="energy" value={energy} />
+            <div style={{ height: "8px" }} /> {/* 区切り */}
+            <VarRow name="len(deck)" value={deckCount} />
+            <VarRow name="len(hand)" value={handCount} />
+            <VarRow name="len(discard)" value={discardCount} />
+          </div>
         </div>
 
-        <div className="codeBox">
-          {(() => {
-            const cardToDisplay = executingCard || selectedCard;
-            if (!cardToDisplay) {
-              return (
-                <div
-                  className="codeLine"
-                  style={{ color: "var(--py-text-muted)" }}
-                >
-                  カードにホバーしてコードを表示
-                </div>
-              );
-            }
+        {/* Code Panel */}
+        <div className="panelSection" style={{ flex: 1, minHeight: 0 }}>
+          <div className="sectionTitle">
+            {executingCard
+              ? `Executing: ${executingCard.name}`
+              : selectedCard
+                ? `Code: ${selectedCard.name}`
+                : "Code Explorer"}
+          </div>
 
-            return cardToDisplay.codeLines.map((line, i) => {
-              const isActive = executingCard != null && i === currentLineIndex;
-              return (
-                <div key={i} className={`codeLine ${isActive ? "active" : ""}`}>
-                  {line.text === "" ? " " : line.text}
-                </div>
-              );
-            });
-          })()}
+          <div className="sectionBox" style={{ height: "100%" }}>
+            {(() => {
+              const cardToDisplay = executingCard || selectedCard;
+              if (!cardToDisplay) {
+                return (
+                  <div
+                    className="codeLine"
+                    style={{ color: "var(--py-text-muted)" }}
+                  >
+                    カードにホバーしてコードを表示
+                  </div>
+                );
+              }
+
+              return cardToDisplay.codeLines.map((line, i) => {
+                const isActive =
+                  executingCard != null && i === currentLineIndex;
+                return (
+                  <div
+                    key={i}
+                    className={`codeLine ${isActive ? "active" : ""}`}
+                  >
+                    {line.text === "" ? " " : line.text}
+                  </div>
+                );
+              });
+            })()}
+          </div>
         </div>
       </div>
     </div>

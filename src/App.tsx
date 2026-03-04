@@ -50,6 +50,9 @@ export default function App() {
             currentLineIndex={game.currentLineIndex}
             enemyAnimState={game.enemyAnimState}
             setEnemyAnimState={game.setEnemyAnimState}
+            deckCount={game.cards.deck.length}
+            handCount={game.cards.hand.length}
+            discardCount={game.cards.discard.length}
           />
 
           <Hand
