@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { DashboardScreen } from "./DashboardScreen";
+import { DashboardScreen } from "@/features/dashboard/components/DashboardScreen";
 
 describe("DashboardScreen", () => {
   it('出撃ボタンをクリックすると、onNavigateが "battle" 引数で呼ばれること', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { makeStarterDeck } from "./cards";
+import { makeStarterDeck } from "@/features/battle/utils/cards";
 
 describe("cards/makeStarterDeck", () => {
   it("スターターデッキは8枚のカードで構成されること", () => {

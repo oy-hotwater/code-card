@@ -1,4 +1,4 @@
-import type { Card } from "./types";
+import type { Card } from "@/features/battle/utils/types";
 
 const uid = () => `c_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 

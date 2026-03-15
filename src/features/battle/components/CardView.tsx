@@ -1,5 +1,5 @@
 import { motion, useMotionValue } from "framer-motion";
-import type { Card } from "../game/types";
+import type { Card } from "@/features/battle/utils/types";
 import { useMemo, useState } from "react";
 
 type Props = {

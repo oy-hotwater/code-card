@@ -1,7 +1,7 @@
-import type { Card } from "../game/types";
+import type { Card } from "@/features/battle/utils/types";
 import TrojanHorseIcon, {
   type TrojanHorseState,
-} from "./components/TrojanHorseIcon";
+} from "@/components/TrojanHorseIcon";
 import { motion } from "framer-motion";
 
 type Props = {

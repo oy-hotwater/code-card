@@ -1,6 +1,6 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { useGame } from "./useGame";
+import { useGame } from "@/features/battle/hooks/useGame";
 
 describe("useGame Hook", () => {
   it("初期化時に正しいステータスがセットされること", () => {

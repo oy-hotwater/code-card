@@ -1,5 +1,5 @@
-import type { Card, CardId } from "../game/types";
-import { CardView } from "./CardView";
+import type { Card, CardId } from "@/features/battle/utils/types";
+import { CardView } from "@/features/battle/components/CardView";
 
 type Props = {
   cards: Card[];

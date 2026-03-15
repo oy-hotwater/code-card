@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { shuffle } from "./utils";
+import { shuffle } from "@/features/battle/utils/utils";
 
 describe("utils/shuffle", () => {
   it("元の配列と同じ長さの配列を返すこと", () => {

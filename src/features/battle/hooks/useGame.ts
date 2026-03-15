@@ -1,8 +1,8 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
-import type { Card, CardId } from "./types";
-import { makeStarterDeck } from "./cards";
-import type { TrojanHorseState } from "../ui/components/TrojanHorseIcon";
-import { shuffle } from "./utils";
+import type { Card, CardId } from "@/features/battle/utils/types";
+import { makeStarterDeck } from "@/features/battle/utils/cards";
+import type { TrojanHorseState } from "@/components/TrojanHorseIcon";
+import { shuffle } from "@/features/battle/utils/utils";
 
 export function useGame() {
   // 山札・手札・捨て札をまとめて管理

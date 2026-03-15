@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useGame } from "@/game/useGame";
-import { BattleBoard } from "@/ui/BattleBoard";
-import { Hand } from "@/ui/Hand";
-import { BootScreen } from "@/ui/screens/BootScreen";
-import { DashboardScreen } from "@/ui/screens/DashboardScreen";
+import { useGame } from "@/features/battle/hooks/useGame";
+import { BattleBoard } from "@/features/battle/components/BattleBoard";
+import { Hand } from "@/features/battle/components/Hand";
+import { BootScreen } from "@/features/boot/components/BootScreen";
+import { DashboardScreen } from "@/features/dashboard/components/DashboardScreen";
 
 export type ScreenType = "boot" | "dashboard" | "battle";
 
