@@ -54,10 +54,12 @@ syncing the game's state (e.g., HP, logs) with the code logic.
 
 ## 使用技術 / Technologies
 
-- TypeScript
-- React
-- Vite
-- Framer Motion (流麗なカードアニメーションとUIインタラクションに使用)
+- **TypeScript**
+- **React**
+- **Vite**
+- **Framer Motion** (流麗なカードアニメーションとUIインタラクションに使用)
+- **Vitest** (高速な単体テスト・ロジックテスト)
+- **React Testing Library** (ユーザー体験に即したUIコンポーネントテスト)
 
 ---
 
@@ -72,6 +74,30 @@ syncing the game's state (e.g., HP, logs) with the code logic.
 - **Step-by-Step Execution**: Executing code line by line with visual highlights.
 - **Visual State Changes**: Basic syntax like assignment, arithmetic, and return values are directly reflected as game actions (e.g., dealing damage).
 - **Intuitive UI**: Drag-and-drop card interactions make learning to code feel like playing a game.
+
+---
+
+## アーキテクチャと品質保証 / Architecture & QA
+
+本プロジェクトは、機能追加や仕様変更に強いスケーラブルな設計を目指しています。
+
+- **機能駆動アーキテクチャ (Feature-Driven Architecture)**: 
+  単なる「UI」や「Logic」といった技術ベースの分割ではなく、`battle` や `dashboard` といった機能単位でディレクトリを分割・カプセル化し、保守性を高めています。
+- **3層の自動テスト**:
+  - **Unit Test**: `utils` などの純粋関数のロジックを担保。
+  - **Custom Hook Test**: UIに依存しない形での複雑な状態遷移（ターン制御やHP計算など）の結合テスト。
+  - **UI Integration Test**: ユーザーの実際の操作（クリックや描画）に基づいたコンポーネントのテスト。
+
+---
+
+## 今後の展望 / Future Roadmap
+
+今後の改善・拡張プランとして、以下の導入を予定しています。
+
+1. **状態管理ライブラリの導入 (Zustand等)**
+   - 現在の `useState` ベースのローカル状態管理から、軽量なグローバル状態管理へと移行し、コンポーネント間のPropsリレーを解消します。これにより、ゲームロジックとUIコンポーネントの結合度をさらに下げ、よりクリーンな設計を目指します。
+2. **CI（継続的インテグレーション）の構築**
+   - GitHub Actions等を導入し、コードのPushやPull Request時に自動でLint（静的解析）とTest（Vitest）が実行されるパイプラインを構築します。これにより、バグの混入を未然に防ぎ、常にプロダクションレディな品質を維持する仕組みを作ります。
 
 ---
 
