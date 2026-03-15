@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useGame } from "./game/useGame";
-import { BattleBoard } from "./ui/BattleBoard";
-import { Hand } from "./ui/Hand";
-import { BootScreen } from "./ui/screens/BootScreen";
-import { DashboardScreen } from "./ui/screens/DashboardScreen";
+import { useGame } from "@/game/useGame";
+import { BattleBoard } from "@/ui/BattleBoard";
+import { Hand } from "@/ui/Hand";
+import { BootScreen } from "@/ui/screens/BootScreen";
+import { DashboardScreen } from "@/ui/screens/DashboardScreen";
 
 export type ScreenType = "boot" | "dashboard" | "battle";
 
