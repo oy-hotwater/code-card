@@ -2,16 +2,7 @@ import { useMemo, useState, useEffect, useCallback } from "react";
 import type { Card, CardId } from "./types";
 import { makeStarterDeck } from "./cards";
 import type { TrojanHorseState } from "../ui/components/TrojanHorseIcon";
-
-// シャッフル用ユーティリティ関数
-function shuffle<T>(array: T[]): T[] {
-  const newArray = [...array];
-  for (let i = newArray.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-  }
-  return newArray;
-}
+import { shuffle } from "./utils";
 
 export function useGame() {
   // 山札・手札・捨て札をまとめて管理
