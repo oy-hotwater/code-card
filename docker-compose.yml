@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    init: true # 追加: コンテナの停止をスムーズにする
     ports:
       - "5174:5174"
     volumes:
