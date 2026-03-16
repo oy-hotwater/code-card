@@ -1,0 +1,14 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5174:5174"
+    volumes:
+      # ローカルのソースコードをコンテナ内の/appに同期（ホットリロード用）
+      - .:/app
+      # コンテナ内のnode_modulesをローカルの変更で上書きしないようにする（匿名ボリューム）
+      - /app/node_modules
+    # viteはデフォルトではホストからアクセスできないため、コマンドを上書きして --host を指定
+    command: npm run dev -- --host
