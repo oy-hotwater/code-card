@@ -1,29 +1,6 @@
-import type { Card } from "@/features/battle/utils/types";
-import TrojanHorseIcon, {
-  type TrojanHorseState,
-} from "@/components/TrojanHorseIcon";
+import TrojanHorseIcon from "@/components/TrojanHorseIcon";
 import { motion } from "framer-motion";
-
-type Props = {
-  enemyHp: number;
-  maxEnemyHp: number;
-  playerHp: number;
-  maxPlayerHp: number;
-  turn: "player" | "enemy";
-  energy: number;
-  maxEnergy: number;
-  playerBlock: number;
-  lastLog: string;
-  onEndTurn: () => void;
-  selectedCard: Card | null;
-  executingCard: Card | null;
-  currentLineIndex: number;
-  enemyAnimState: TrojanHorseState;
-  setEnemyAnimState: (state: TrojanHorseState) => void;
-  deckCount: number;
-  handCount: number;
-  discardCount: number;
-};
+import { useBattleStore } from "@/features/battle/stores/useBattleStore";
 
 // 変数ウォッチャー用コンポーネント（値が変化した時に光る）
 function VarRow({
@@ -56,36 +33,24 @@ function VarRow({
   );
 }
 
-export function BattleBoard({
-  enemyHp,
-  maxEnemyHp,
-  playerHp,
-  maxPlayerHp,
-  turn,
-  energy,
-  maxEnergy,
-  playerBlock,
-  lastLog,
-  onEndTurn,
-  selectedCard,
-  executingCard,
-  currentLineIndex,
-  enemyAnimState,
-  setEnemyAnimState,
-  deckCount,
-  handCount,
-  discardCount,
-}: Props) {
-  const isPlayerTurn = turn === "player";
+// Zustandにより、Propsの型定義を削除し、引数を空にできる
+export function BattleBoard() {
+  // Storeから必要な状態だけを抽出して購読する
+  const store = useBattleStore();
+  const isPlayerTurn = store.turn === "player";
+
+  // 選択中のカードを特定
+  const selectedCard =
+    store.cards.hand.find((c) => c.id === store.selectedId) ?? null;
 
   // HPバーの割合を計算 (0% ~ 100%)
   const playerHpPercent = Math.max(
     0,
-    Math.min(100, (playerHp / maxPlayerHp) * 100),
+    Math.min(100, (store.playerHp / store.maxPlayerHp) * 100),
   );
   const enemyHpPercent = Math.max(
     0,
-    Math.min(100, (enemyHp / maxEnemyHp) * 100),
+    Math.min(100, (store.enemyHp / store.maxEnemyHp) * 100),
   );
 
   return (
@@ -103,17 +68,17 @@ export function BattleBoard({
           <div className="hpBox">
             <div className="hpHeader">
               <div className="hpLabel">
-                Player (Energy: {energy}/{maxEnergy})
+                Player (Energy: {store.energy}/{store.maxEnergy})
               </div>
               <div
                 className="hpValue"
                 style={{ display: "flex", alignItems: "center", gap: "8px" }}
               >
                 <span>
-                  {playerHp} / {maxPlayerHp} HP
+                  {store.playerHp} / {store.maxPlayerHp} HP
                 </span>
-                {playerBlock > 0 && (
-                  <span className="blockBadge">🛡️ {playerBlock}</span>
+                {store.playerBlock > 0 && (
+                  <span className="blockBadge">🛡️ {store.playerBlock}</span>
                 )}
               </div>
             </div>
@@ -130,7 +95,7 @@ export function BattleBoard({
             <div className="hpHeader">
               <div className="hpLabel">Enemy</div>
               <div className="hpValue">
-                {enemyHp} / {maxEnemyHp} HP
+                {store.enemyHp} / {store.maxEnemyHp} HP
               </div>
             </div>
             <div className="hpBarContainer">
@@ -142,12 +107,12 @@ export function BattleBoard({
           </div>
         </div>
 
-        <div className="log">{lastLog}</div>
+        <div className="log">{store.lastLog}</div>
 
         <button
           className="endTurnBtn"
-          onClick={onEndTurn}
-          disabled={!isPlayerTurn || executingCard !== null}
+          onClick={store.endTurn}
+          disabled={!isPlayerTurn || store.isExecuting}
         >
           End Turn
         </button>
@@ -158,19 +123,15 @@ export function BattleBoard({
           <div className="enemyName">TROJAN</div>
           <div
             className="enemySprite"
-            style={{ cursor: executingCard ? "default" : "pointer" }}
+            style={{ cursor: store.isExecuting ? "default" : "pointer" }}
           >
             <TrojanHorseIcon
-              state={enemyAnimState}
+              state={store.enemyAnimState}
               onAnimationComplete={(completedState) => {
-                if (
-                  completedState === "attack" ||
-                  completedState === "damage" ||
-                  completedState === "enter"
-                ) {
-                  setEnemyAnimState("idle");
+                if (["attack", "damage", "enter"].includes(completedState)) {
+                  store.setEnemyAnimState("idle");
                 } else if (completedState === "exit") {
-                  setTimeout(() => setEnemyAnimState("enter"), 1000);
+                  setTimeout(() => store.setEnemyAnimState("enter"), 1000);
                 }
               }}
             />
@@ -179,26 +140,26 @@ export function BattleBoard({
       </div>
 
       <div className="sidePanel">
-        {/* Variables Panel (Watch) */}
+        {/* Variables Panel */}
         <div className="panelSection watchSection">
           <div className="sectionTitle">Variables</div>
           <div className="sectionBox">
-            <VarRow name="enemy_hp" value={enemyHp} />
-            <VarRow name="player_hp" value={playerHp} />
-            <VarRow name="player_block" value={playerBlock} />
-            <VarRow name="energy" value={energy} />
+            <VarRow name="enemy_hp" value={store.enemyHp} />
+            <VarRow name="player_hp" value={store.playerHp} />
+            <VarRow name="player_block" value={store.playerBlock} />
+            <VarRow name="energy" value={store.energy} />
             <div style={{ height: "8px" }} /> {/* 区切り */}
-            <VarRow name="len(deck)" value={deckCount} />
-            <VarRow name="len(hand)" value={handCount} />
-            <VarRow name="len(discard)" value={discardCount} />
+            <VarRow name="len(deck)" value={store.cards.deck.length} />
+            <VarRow name="len(hand)" value={store.cards.hand.length} />
+            <VarRow name="len(discard)" value={store.cards.discard.length} />
           </div>
         </div>
 
         {/* Code Panel */}
         <div className="panelSection codeSection">
           <div className="sectionTitle">
-            {executingCard
-              ? `Executing: ${executingCard.name}`
+            {store.executingCard
+              ? `Executing: ${store.executingCard.name}`
               : selectedCard
                 ? `Code: ${selectedCard.name}`
                 : "Code Explorer"}
@@ -206,7 +167,7 @@ export function BattleBoard({
 
           <div className="sectionBox codeBox">
             {(() => {
-              const cardToDisplay = executingCard || selectedCard;
+              const cardToDisplay = store.executingCard || selectedCard;
               if (!cardToDisplay) {
                 return (
                   <div
@@ -220,7 +181,7 @@ export function BattleBoard({
 
               return cardToDisplay.codeLines.map((line, i) => {
                 const isActive =
-                  executingCard != null && i === currentLineIndex;
+                  store.executingCard != null && i === store.currentLineIndex;
                 return (
                   <div
                     key={i}
