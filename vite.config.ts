@@ -1,4 +1,3 @@
-//import { defineConfig } from "vite";
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import path from "path";
@@ -9,6 +8,13 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  server: {
+    host: true, // Dockerコンテナ外（ホストマシン）からのアクセスを許可
+    port: 5174, // Viteのデフォルトポートを5174に変更（Docker環境での競合を避けるため）
+    watch: {
+      usePolling: true, // Docker環境（特にWindows/Mac）でのファイル変更検知を確実にするため
     },
   },
   test: {
