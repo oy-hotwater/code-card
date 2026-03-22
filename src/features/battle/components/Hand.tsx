@@ -13,6 +13,15 @@ export function Hand() {
   const store = useBattleStore();
   const { hand, deck, discard } = store.cards;
 
+  // ここでフェーズから状態を算出する
+  const isPlayerTurn = store.phase === "PLAYER_IDLE";
+  const isExecuting = [
+    "PLAYER_EXECUTING",
+    "ENEMY_TURN_START",
+    "ENEMY_ATTACKING",
+    "TURN_END",
+  ].includes(store.phase);
+
   return (
     <div className="bottomArea">
       {/* 山札 */}
@@ -28,8 +37,7 @@ export function Hand() {
           {hand.map((card, i) => {
             const t = fanTransform(i, hand.length);
             const isDragging = store.draggingId === card.id;
-            const isPlayable =
-              store.turn === "player" && store.energy >= card.cost;
+            const isPlayable = isPlayerTurn && store.energy >= card.cost;
 
             return (
               <CardView
@@ -44,13 +52,13 @@ export function Hand() {
                 onDropToPlayZone={() => store.playCard(card.id)}
                 selected={store.selectedId === card.id}
                 onHoverSelect={store.setSelectedId}
-                isExecuting={store.isExecuting}
+                isExecuting={isExecuting}
               />
             );
           })}
         </div>
         <div className="playHint">
-          {store.turn === "player"
+          {isPlayerTurn
             ? "Drag up to play / Hover to inspect"
             : "Enemy is acting..."}
         </div>

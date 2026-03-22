@@ -28,10 +28,6 @@ interface BattleState {
   maxEnemyHp: number;
   maxEnergy: number;
 
-  // --- Computed (派生状態) ---
-  isExecuting: boolean; // UI側の表示用にgetterとして残す
-  isPlayerTurn: boolean; // UI側の表示用にgetterとして追加
-
   // --- アクション (Actions) ---
   initGame: () => void;
   drawCards: (amount: number) => void;
@@ -72,23 +68,6 @@ export const useBattleStore = create<BattleState>((set, get) => ({
   maxPlayerHp: MAX_PLAYER_HP,
   maxEnemyHp: MAX_ENEMY_HP,
   maxEnergy: MAX_ENERGY,
-
-  // UIコンポーネントが「今カードを触っていいか」「実行中か」を判定しやすくするためのComputed
-  get isExecuting() {
-    const phase = get().phase;
-    // フェーズが実行系・敵ターン系の場合は true を返す
-    return (
-      phase === "PLAYER_EXECUTING" ||
-      phase === "ENEMY_TURN_START" ||
-      phase === "ENEMY_ATTACKING" ||
-      phase === "TURN_END"
-    );
-  },
-
-  get isPlayerTurn() {
-    // フェーズがプレイヤーの入力待ちの時だけ true
-    return get().phase === "PLAYER_IDLE";
-  },
 
   initGame: () => {
     const initialDeck = shuffle(makeStarterDeck());

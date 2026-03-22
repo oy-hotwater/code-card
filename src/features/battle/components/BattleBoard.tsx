@@ -37,7 +37,14 @@ function VarRow({
 export function BattleBoard() {
   // Storeから必要な状態だけを抽出して購読する
   const store = useBattleStore();
-  const isPlayerTurn = store.turn === "player";
+  // ここでフェーズから状態を算出する
+  const isPlayerTurn = store.phase === "PLAYER_IDLE";
+  const isExecuting = [
+    "PLAYER_EXECUTING",
+    "ENEMY_TURN_START",
+    "ENEMY_ATTACKING",
+    "TURN_END",
+  ].includes(store.phase);
 
   // 選択中のカードを特定
   const selectedCard =
@@ -112,7 +119,7 @@ export function BattleBoard() {
         <button
           className="endTurnBtn"
           onClick={store.endTurn}
-          disabled={!isPlayerTurn || store.isExecuting}
+          disabled={!isPlayerTurn || isExecuting}
         >
           End Turn
         </button>
@@ -123,7 +130,7 @@ export function BattleBoard() {
           <div className="enemyName">TROJAN</div>
           <div
             className="enemySprite"
-            style={{ cursor: store.isExecuting ? "default" : "pointer" }}
+            style={{ cursor: isExecuting ? "default" : "pointer" }}
           >
             <TrojanHorseIcon
               state={store.enemyAnimState}
