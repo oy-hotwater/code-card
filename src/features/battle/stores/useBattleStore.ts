@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import type { Card, CardId, BattlePhase } from "@/features/battle/utils/types";
-import { makeStarterDeck } from "@/features/battle/utils/cards";
 import { shuffle } from "@/features/battle/utils/utils";
 import type { TrojanHorseState } from "@/components/TrojanHorseIcon";
 
@@ -29,7 +28,7 @@ interface BattleState {
   maxEnergy: number;
 
   // --- アクション (Actions) ---
-  initGame: () => void;
+  initGame: (deckCards: Card[]) => void;
   drawCards: (amount: number) => void;
   playCard: (cardId: CardId) => void;
   endTurn: () => void;
@@ -69,8 +68,8 @@ export const useBattleStore = create<BattleState>((set, get) => ({
   maxEnemyHp: MAX_ENEMY_HP,
   maxEnergy: MAX_ENERGY,
 
-  initGame: () => {
-    const initialDeck = shuffle(makeStarterDeck());
+  initGame: (deckCards) => {
+    const initialDeck = shuffle([...deckCards]);
     const initialHand = initialDeck.splice(0, 4);
     set({
       phase: "PLAYER_IDLE",
