@@ -37,8 +37,15 @@ function VarRow({
 export function BattleBoard() {
   // Storeから必要な状態だけを抽出して購読する
   const store = useBattleStore();
+
   // ここでフェーズから状態を算出する
-  const isPlayerTurn = store.phase === "PLAYER_IDLE";
+  //UI表示用（実行中もプレイヤーのターンとして扱う）
+  const isPlayerPhase = ["PLAYER_IDLE", "PLAYER_EXECUTING"].includes(
+    store.phase,
+  );
+  // ボタン制御用（操作できるのはIDLE時のみ）
+  const canPlayerAct = store.phase === "PLAYER_IDLE";
+
   const isExecuting = [
     "PLAYER_EXECUTING",
     "ENEMY_TURN_START",
@@ -65,9 +72,9 @@ export function BattleBoard() {
       <div className="hud">
         <div
           className="turnIndicator"
-          style={{ color: isPlayerTurn ? "var(--py-accent)" : "#ff4a4a" }}
+          style={{ color: isPlayerPhase ? "var(--py-accent)" : "#ff4a4a" }}
         >
-          {isPlayerTurn ? "▶ Player Turn" : "▶ Enemy Turn"}
+          {isPlayerPhase ? "▶ Player Turn" : "▶ Enemy Turn"}
         </div>
 
         <div className="hpRow">
@@ -119,7 +126,7 @@ export function BattleBoard() {
         <button
           className="endTurnBtn"
           onClick={store.endTurn}
-          disabled={!isPlayerTurn || isExecuting}
+          disabled={!canPlayerAct}
         >
           End Turn
         </button>
