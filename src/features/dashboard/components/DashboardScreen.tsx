@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
+import type { ScreenType } from "@/App";
 
 type Props = {
-  onNavigate: (screen: "battle") => void; // 今後他画面が増えたら型を追加
+  onNavigate: (screen: ScreenType) => void;
 };
 
 export function DashboardScreen({ onNavigate }: Props) {
@@ -31,9 +32,10 @@ export function DashboardScreen({ onNavigate }: Props) {
 
         {/* 以下は未実装モジュールのプレースホルダー */}
         <motion.button
-          className="menuItem disabled"
+          className="menuItem"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
+          onClick={() => onNavigate("editor")}
         >
           <div className="menuIcon">⚙</div>
           <div className="menuText">
