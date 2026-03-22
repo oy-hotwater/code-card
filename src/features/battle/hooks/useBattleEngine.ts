@@ -1,13 +1,16 @@
 import { useEffect } from "react";
 import { useBattleStore } from "@/features/battle/stores/useBattleStore";
+import { useDeckStore } from "@/features/editor/stores/useDeckStore";
 import type { TrojanHorseState } from "@/components/TrojanHorseIcon";
 
 export function useBattleEngine() {
   const store = useBattleStore();
+  // デッキストアから現在のデッキを取得
+  const currentDeck = useDeckStore((state) => state.deck);
 
   // 1. 初期化
   useEffect(() => {
-    store.initGame();
+    store.initGame(currentDeck);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
