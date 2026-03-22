@@ -45,7 +45,7 @@ export function ScriptEditorScreen({ onBack }: Props) {
           >
             {collection.map((card, i) => (
               <div
-                key={`${card.id}-${i}`}
+                key={`${card.uid}-${i}`}
                 onClick={() => addCardToDeck(card)}
                 style={{
                   padding: "8px",
@@ -76,8 +76,8 @@ export function ScriptEditorScreen({ onBack }: Props) {
           >
             {deck.map((card, i) => (
               <div
-                key={`${card.id}-${i}`}
-                onClick={() => removeCardFromDeck(card.id)}
+                key={`${card.uid}-${i}`}
+                onClick={() => removeCardFromDeck(card.uid)}
                 style={{
                   padding: "8px",
                   border: "1px solid var(--py-accent)",

@@ -36,21 +36,21 @@ export function Hand() {
         <div className="hand">
           {hand.map((card, i) => {
             const t = fanTransform(i, hand.length);
-            const isDragging = store.draggingId === card.id;
+            const isDragging = store.draggingId === card.uid;
             const isPlayable = isPlayerTurn && store.energy >= card.cost;
 
             return (
               <CardView
-                key={card.id}
+                key={card.uid}
                 card={card}
                 baseX={t.x}
                 baseY={t.y}
                 baseRotate={t.rotate}
                 isPlayable={isPlayable}
                 isDragging={isDragging}
-                setDragging={(v) => store.setDraggingId(v ? card.id : null)}
-                onDropToPlayZone={() => store.playCard(card.id)}
-                selected={store.selectedId === card.id}
+                setDragging={(v) => store.setDraggingId(v ? card.uid : null)}
+                onDropToPlayZone={() => store.playCard(card.uid)}
+                selected={store.selectedId === card.uid}
                 onHoverSelect={store.setSelectedId}
                 isExecuting={isExecuting}
               />

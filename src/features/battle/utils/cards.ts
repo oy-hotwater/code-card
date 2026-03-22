@@ -1,11 +1,18 @@
-import type { Card } from "@/features/battle/utils/types";
+import type {
+  CardMaster,
+  CardInstance,
+  CardMasterId,
+} from "@/features/battle/utils/types";
 
-const uid = () => `c_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+// UID生成関数
+const generateUid = () =>
+  `c_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 
-// 1. 基本攻撃カード
-function createAttackCard(): Card {
-  return {
-    id: uid(),
+// 1. カードマスタの定義（データベースの役割）
+export const CARD_MASTERS: Record<CardMasterId, CardMaster> = {
+  // 01: 基本攻撃カード
+  attack_basic: {
+    id: "attack_basic",
     name: "attack(damage=3)",
     cost: 1,
     text: "Deal 3 damage.",
@@ -24,13 +31,10 @@ function createAttackCard(): Card {
       },
       { text: "  return" },
     ],
-  };
-}
-
-// 2. 基本防御カード
-function createProtectCard(): Card {
-  return {
-    id: uid(),
+  },
+  // 02: 基本防御カード
+  protect_basic: {
+    id: "protect_basic",
     name: "protect(block=5)",
     cost: 1,
     text: "Gain 5 Block.",
@@ -46,13 +50,10 @@ function createProtectCard(): Card {
       },
       { text: "  return" },
     ],
-  };
-}
-
-// 3. 【新規】変数操作（回復）カード
-function createHealCard(): Card {
-  return {
-    id: uid(),
+  },
+  // 03. 変数操作（回復）カード
+  heal_8HP: {
+    id: "heal_8HP",
     name: "heal(amount=8)",
     cost: 1,
     text: "Restore 8 HP.",
@@ -68,13 +69,10 @@ function createHealCard(): Card {
       },
       { text: "  return" },
     ],
-  };
-}
-
-// 4. 【新規】リスト操作（ドロー）カード
-function createDrawCard(): Card {
-  return {
-    id: uid(),
+  },
+  // 04: リスト操作（ドロー）カード
+  draw_2card: {
+    id: "draw_2card",
     name: "deck.pop()",
     cost: 1,
     text: "Draw 2 cards.",
@@ -98,13 +96,10 @@ function createDrawCard(): Card {
         log: "手札(配列)に要素を append() して追加！",
       },
     ],
-  };
-}
-
-// 5. 【新規】for文（連続攻撃）カード
-function createForLoopCard(): Card {
-  return {
-    id: uid(),
+  },
+  // 05. for文（連続攻撃）カード
+  attack_for3loop: {
+    id: "attack_for3loop",
     name: "for i in range(3)",
     cost: 2,
     text: "Deal 2 damage 3 times.",
@@ -134,13 +129,10 @@ function createForLoopCard(): Card {
         log: "3回目のループ: 2ダメージ！",
       },
     ],
-  };
-}
-
-// 6. 【新規】OSモジュール/大技（ウイルス除去）カード
-function createVirusRemovalCard(): Card {
-  return {
-    id: uid(),
+  },
+  // 06: OSモジュール/大技（ウイルス除去）カード
+  attack_virus_removal: {
+    id: "attack_virus_removal",
     name: "os.remove('/virus')",
     cost: 3,
     text: "Deal 18 damage.",
@@ -168,19 +160,36 @@ function createVirusRemovalCard(): Card {
         log: "ウイルス除去処理が完了しました",
       },
     ],
+  },
+};
+
+// 2. マスタデータからインスタンスを生成する関数
+export function createCardInstance(masterId: CardMasterId): CardInstance {
+  const master = CARD_MASTERS[masterId];
+  if (!master) {
+    throw new Error(`Card master not found: ${masterId}`);
+  }
+
+  // マスタデータをディープコピーしつつ、一意のuidを付与する
+  return {
+    ...master,
+    uid: generateUid(),
+    // codeLines などネストされたオブジェクトがある場合は、参照を切るために深いコピーが必要な場合があります
+    codeLines: master.codeLines.map((line) => ({ ...line })),
   };
 }
 
-// スターターデッキを生成（新しいカードを盛り込む）
-export function makeStarterDeck(): Card[] {
+// 3. スターターデッキを生成
+export function makeStarterDeck(): CardInstance[] {
+  // 必要なカードの種類と枚数を指定してインスタンスを生成
   return [
-    createAttackCard(),
-    createAttackCard(),
-    createProtectCard(),
-    createProtectCard(),
-    createHealCard(), // 回復
-    createDrawCard(), // 2枚ドロー
-    createForLoopCard(), // 連続攻撃
-    createVirusRemovalCard(), // ウイルス一掃大技（コスト3）
+    createCardInstance("attack_basic"),
+    createCardInstance("attack_basic"),
+    createCardInstance("protect_basic"),
+    createCardInstance("protect_basic"),
+    createCardInstance("heal_8HP"),
+    createCardInstance("draw_2card"),
+    createCardInstance("attack_for3loop"),
+    createCardInstance("attack_virus_removal"),
   ];
 }

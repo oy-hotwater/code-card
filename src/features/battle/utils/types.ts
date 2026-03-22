@@ -1,4 +1,7 @@
-export type CardId = string;
+// カードの種類を一意に識別するID (例: "card_attack", "card_protect")
+export type CardMasterId = string;
+// ゲーム内で個別のカードを識別するID (UUID等)
+export type CardInstanceId = string;
 
 export type CardRarity = "common" | "uncommon" | "rare";
 
@@ -13,8 +16,9 @@ export type CodeLine = {
   animTrigger?: string; // 敵のアニメーション(TrojanHorseState)を発火させるトリガー
 };
 
-export type Card = {
-  id: CardId;
+// 1. カードマスタ（図鑑に載る基本データ）
+export type CardMaster = {
+  id: CardMasterId; // 種類ごとの固定ID
   name: string;
   cost: number;
   text: string;
@@ -22,9 +26,14 @@ export type Card = {
   kind: "attack" | "skill" | "power";
   damage?: number;
   block?: number;
+  codeLines: CodeLine[];
+  notes?: string;
+};
 
-  codeLines: CodeLine[]; // 行ごとのコードとイベントを定義した配列
-  notes?: string; // 補足説明（任意）
+// 2. カードインスタンス（手札やデッキに存在する実体）
+// CardMasterのプロパティをすべて継承しつつ、実体としての一意のIDを持たせる
+export type CardInstance = CardMaster & {
+  uid: CardInstanceId; // ゲーム内で一意のID
 };
 
 // バトルの進行状態を定義

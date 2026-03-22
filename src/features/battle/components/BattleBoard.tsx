@@ -55,7 +55,7 @@ export function BattleBoard() {
 
   // 選択中のカードを特定
   const selectedCard =
-    store.cards.hand.find((c) => c.id === store.selectedId) ?? null;
+    store.cards.hand.find((c) => c.uid === store.selectedId) ?? null;
 
   // HPバーの割合を計算 (0% ~ 100%)
   const playerHpPercent = Math.max(
@@ -104,7 +104,7 @@ export function BattleBoard() {
             </div>
           </div>
 
-          {/* Enemy HP */}
+          {/* Enemy HPaaa */}
           <div className="hpBox">
             <div className="hpHeader">
               <div className="hpLabel">Enemy</div>
