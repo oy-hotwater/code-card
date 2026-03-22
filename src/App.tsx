@@ -2,8 +2,9 @@ import { useState } from "react";
 import { BootScreen } from "@/features/boot/components/BootScreen";
 import { DashboardScreen } from "@/features/dashboard/components/DashboardScreen";
 import { BattleScreen } from "@/features/battle/components/BattleScreen";
+import { ScriptEditorScreen } from "@/features/editor/components/ScriptEditorScreen";
 
-export type ScreenType = "boot" | "dashboard" | "battle";
+export type ScreenType = "boot" | "dashboard" | "battle" | "editor";
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenType>("boot");
@@ -23,6 +24,11 @@ export default function App() {
       {/* 3. バトル画面 */}
       {currentScreen === "battle" && (
         <BattleScreen onAbort={() => setCurrentScreen("dashboard")} />
+      )}
+
+      {/* 4. エディタ画面 */}
+      {currentScreen === "editor" && (
+        <ScriptEditorScreen onBack={() => setCurrentScreen("dashboard")} />
       )}
     </div>
   );
