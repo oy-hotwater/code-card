@@ -1,9 +1,9 @@
 import { motion, useMotionValue } from "framer-motion";
-import type { Card } from "@/features/battle/utils/types";
+import type { CardInstance } from "@/features/battle/utils/types";
 import { useMemo, useState } from "react";
 
 type Props = {
-  card: Card;
+  card: CardInstance;
   baseX: number;
   baseY: number;
   baseRotate: number;
@@ -17,7 +17,7 @@ type Props = {
   isExecuting: boolean;
 };
 
-function rarityClass(r: Card["rarity"]) {
+function rarityClass(r: CardInstance["rarity"]) {
   if (r === "rare") return "rarityRare";
   if (r === "uncommon") return "rarityUncommon";
   return "rarityCommon";
@@ -89,7 +89,7 @@ export function CardView({
       onMouseEnter={() => {
         if (!isExecuting) {
           setHovered(true);
-          onHoverSelect(card.id);
+          onHoverSelect(card.uid);
         }
       }}
       onMouseLeave={() => setHovered(false)}

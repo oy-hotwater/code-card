@@ -16,7 +16,7 @@ export const useDeckStore = create<DeckState>((set) => ({
   addCardToDeck: (card) => set((state) => ({ deck: [...state.deck, card] })),
   removeCardFromDeck: (cardId) =>
     set((state) => {
-      const index = state.deck.findIndex((c) => c.id === cardId);
+      const index = state.deck.findIndex((c) => c.uid === cardId);
       if (index === -1) return state;
       const newDeck = [...state.deck];
       newDeck.splice(index, 1);
