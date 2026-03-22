@@ -26,3 +26,14 @@ export type Card = {
   codeLines: CodeLine[]; // 行ごとのコードとイベントを定義した配列
   notes?: string; // 補足説明（任意）
 };
+
+// バトルの進行状態を定義
+export type BattlePhase =
+  | "INIT" // 初期化中
+  | "PLAYER_IDLE" // プレイヤーの操作待ち
+  | "PLAYER_EXECUTING" // プレイヤーのカード効果をステップ実行中
+  | "ENEMY_TURN_START" // 敵のターン開始（演出など）
+  | "ENEMY_ATTACKING" // 敵の攻撃処理中
+  | "TURN_END" // ターン終了処理
+  | "GAME_OVER" // 勝敗決着
+  | "VICTORY";

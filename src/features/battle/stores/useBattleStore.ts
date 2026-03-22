@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Card, CardId } from "@/features/battle/utils/types";
+import type { Card, CardId, BattlePhase } from "@/features/battle/utils/types";
 import { makeStarterDeck } from "@/features/battle/utils/cards";
 import { shuffle } from "@/features/battle/utils/utils";
 import type { TrojanHorseState } from "@/components/TrojanHorseIcon";
@@ -10,10 +10,10 @@ const MAX_ENERGY = 3;
 
 interface BattleState {
   // --- 状態 (State) ---
+  phase: BattlePhase; // turn を廃止し、フェーズで一元管理
   cards: { deck: Card[]; hand: Card[]; discard: Card[] };
   enemyHp: number;
   playerHp: number;
-  turn: "player" | "enemy";
   energy: number;
   playerBlock: number;
   lastLog: string;
@@ -28,9 +28,6 @@ interface BattleState {
   maxEnemyHp: number;
   maxEnergy: number;
 
-  // --- Computed (派生状態) ---
-  isExecuting: boolean;
-
   // --- アクション (Actions) ---
   initGame: () => void;
   drawCards: (amount: number) => void;
@@ -38,6 +35,7 @@ interface BattleState {
   endTurn: () => void;
 
   // --- セッター (Engine等から直接値を更新するため) ---
+  setPhase: (phase: BattlePhase) => void; // エンジンからフェーズを更新するためのセッター
   setDraggingId: (id: CardId | null) => void;
   setSelectedId: (id: CardId | null) => void;
   setExecutingCard: (card: Card | null) => void;
@@ -48,17 +46,16 @@ interface BattleState {
   setPlayerBlock: (updater: number | ((prev: number) => number)) => void;
   setEnergy: (updater: number | ((prev: number) => number)) => void;
   setLastLog: (updater: string | ((prev: string) => string)) => void;
-  setTurn: (turn: "player" | "enemy") => void;
   setCards: (
     updater: (prev: BattleState["cards"]) => BattleState["cards"],
   ) => void;
 }
 
 export const useBattleStore = create<BattleState>((set, get) => ({
+  phase: "INIT", // 初期状態
   cards: { deck: [], hand: [], discard: [] },
   enemyHp: MAX_ENEMY_HP,
   playerHp: MAX_PLAYER_HP,
-  turn: "player",
   energy: MAX_ENERGY,
   playerBlock: 0,
   lastLog: "Battle Start! Your turn.",
@@ -72,18 +69,14 @@ export const useBattleStore = create<BattleState>((set, get) => ({
   maxEnemyHp: MAX_ENEMY_HP,
   maxEnergy: MAX_ENERGY,
 
-  get isExecuting() {
-    return get().executingCard !== null;
-  },
-
   initGame: () => {
     const initialDeck = shuffle(makeStarterDeck());
     const initialHand = initialDeck.splice(0, 4);
     set({
+      phase: "PLAYER_IDLE",
       cards: { deck: initialDeck, hand: initialHand, discard: [] },
       enemyHp: MAX_ENEMY_HP,
       playerHp: MAX_PLAYER_HP,
-      turn: "player",
       energy: MAX_ENERGY,
       playerBlock: 0,
       lastLog: "Battle Start! Your turn.",
@@ -123,7 +116,9 @@ export const useBattleStore = create<BattleState>((set, get) => ({
 
   playCard: (cardId: CardId) => {
     const state = get();
-    if (state.isExecuting || state.turn !== "player") return;
+
+    // 厳密なフェーズチェック。PLAYER_IDLE 以外では絶対にカードを使えないようにする
+    if (state.phase !== "PLAYER_IDLE") return;
 
     const card = state.cards.hand.find((c) => c.id === cardId);
     if (!card) return;
@@ -136,6 +131,7 @@ export const useBattleStore = create<BattleState>((set, get) => ({
     }
 
     set((prev) => ({
+      phase: "PLAYER_EXECUTING", // 実行中フェーズへ移行
       energy: prev.energy - card.cost,
       cards: {
         ...prev.cards,
@@ -150,10 +146,10 @@ export const useBattleStore = create<BattleState>((set, get) => ({
 
   endTurn: () => {
     const state = get();
-    if (state.isExecuting || state.turn !== "player") return;
+    if (state.phase !== "PLAYER_IDLE") return;
 
     set((prev) => ({
-      turn: "enemy",
+      phase: "ENEMY_TURN_START",
       lastLog: "ターン終了。残った手札を捨て札へ送ります...",
       selectedId: null,
       cards: {
@@ -165,6 +161,7 @@ export const useBattleStore = create<BattleState>((set, get) => ({
   },
 
   // --- 汎用セッター群 ---
+  setPhase: (phase) => set({ phase }),
   setDraggingId: (id) => set({ draggingId: id }),
   setSelectedId: (id) => set({ selectedId: id }),
   setExecutingCard: (card) => set({ executingCard: card }),
@@ -198,6 +195,5 @@ export const useBattleStore = create<BattleState>((set, get) => ({
     set((state) => ({
       lastLog: typeof updater === "function" ? updater(state.lastLog) : updater,
     })),
-  setTurn: (turn) => set({ turn }),
   setCards: (updater) => set((state) => ({ cards: updater(state.cards) })),
 }));

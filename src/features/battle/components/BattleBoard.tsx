@@ -37,7 +37,21 @@ function VarRow({
 export function BattleBoard() {
   // Storeから必要な状態だけを抽出して購読する
   const store = useBattleStore();
-  const isPlayerTurn = store.turn === "player";
+
+  // ここでフェーズから状態を算出する
+  //UI表示用（実行中もプレイヤーのターンとして扱う）
+  const isPlayerPhase = ["PLAYER_IDLE", "PLAYER_EXECUTING"].includes(
+    store.phase,
+  );
+  // ボタン制御用（操作できるのはIDLE時のみ）
+  const canPlayerAct = store.phase === "PLAYER_IDLE";
+
+  const isExecuting = [
+    "PLAYER_EXECUTING",
+    "ENEMY_TURN_START",
+    "ENEMY_ATTACKING",
+    "TURN_END",
+  ].includes(store.phase);
 
   // 選択中のカードを特定
   const selectedCard =
@@ -58,9 +72,9 @@ export function BattleBoard() {
       <div className="hud">
         <div
           className="turnIndicator"
-          style={{ color: isPlayerTurn ? "var(--py-accent)" : "#ff4a4a" }}
+          style={{ color: isPlayerPhase ? "var(--py-accent)" : "#ff4a4a" }}
         >
-          {isPlayerTurn ? "▶ Player Turn" : "▶ Enemy Turn"}
+          {isPlayerPhase ? "▶ Player Turn" : "▶ Enemy Turn"}
         </div>
 
         <div className="hpRow">
@@ -112,7 +126,7 @@ export function BattleBoard() {
         <button
           className="endTurnBtn"
           onClick={store.endTurn}
-          disabled={!isPlayerTurn || store.isExecuting}
+          disabled={!canPlayerAct}
         >
           End Turn
         </button>
@@ -123,7 +137,7 @@ export function BattleBoard() {
           <div className="enemyName">TROJAN</div>
           <div
             className="enemySprite"
-            style={{ cursor: store.isExecuting ? "default" : "pointer" }}
+            style={{ cursor: isExecuting ? "default" : "pointer" }}
           >
             <TrojanHorseIcon
               state={store.enemyAnimState}
