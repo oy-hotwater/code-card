@@ -1,5 +1,9 @@
 import { create } from "zustand";
-import type { Card, CardId, BattlePhase } from "@/features/battle/utils/types";
+import type {
+  CardInstance,
+  CardInstanceId,
+  BattlePhase,
+} from "@/features/battle/utils/types";
 import { shuffle } from "@/features/battle/utils/utils";
 import type { TrojanHorseState } from "@/components/TrojanHorseIcon";
 
@@ -10,15 +14,19 @@ const MAX_ENERGY = 3;
 interface BattleState {
   // --- 状態 (State) ---
   phase: BattlePhase; // turn を廃止し、フェーズで一元管理
-  cards: { deck: Card[]; hand: Card[]; discard: Card[] };
+  cards: {
+    deck: CardInstance[];
+    hand: CardInstance[];
+    discard: CardInstance[];
+  };
   enemyHp: number;
   playerHp: number;
   energy: number;
   playerBlock: number;
   lastLog: string;
-  draggingId: CardId | null;
-  selectedId: CardId | null;
-  executingCard: Card | null;
+  draggingId: CardInstanceId | null;
+  selectedId: CardInstanceId | null;
+  executingCard: CardInstance | null;
   currentLineIndex: number;
   enemyAnimState: TrojanHorseState;
 
@@ -28,16 +36,16 @@ interface BattleState {
   maxEnergy: number;
 
   // --- アクション (Actions) ---
-  initGame: (deckCards: Card[]) => void;
+  initGame: (deckCards: CardInstance[]) => void;
   drawCards: (amount: number) => void;
-  playCard: (cardId: CardId) => void;
+  playCard: (cardId: CardInstanceId) => void;
   endTurn: () => void;
 
   // --- セッター (Engine等から直接値を更新するため) ---
   setPhase: (phase: BattlePhase) => void; // エンジンからフェーズを更新するためのセッター
-  setDraggingId: (id: CardId | null) => void;
-  setSelectedId: (id: CardId | null) => void;
-  setExecutingCard: (card: Card | null) => void;
+  setDraggingId: (id: CardInstanceId | null) => void;
+  setSelectedId: (id: CardInstanceId | null) => void;
+  setExecutingCard: (card: CardInstance | null) => void;
   setCurrentLineIndex: (index: number | ((prev: number) => number)) => void;
   setEnemyAnimState: (state: TrojanHorseState) => void;
   setEnemyHp: (updater: number | ((prev: number) => number)) => void;
@@ -113,13 +121,13 @@ export const useBattleStore = create<BattleState>((set, get) => ({
     });
   },
 
-  playCard: (cardId: CardId) => {
+  playCard: (cardId: CardInstanceId) => {
     const state = get();
 
     // 厳密なフェーズチェック。PLAYER_IDLE 以外では絶対にカードを使えないようにする
     if (state.phase !== "PLAYER_IDLE") return;
 
-    const card = state.cards.hand.find((c) => c.id === cardId);
+    const card = state.cards.hand.find((c) => c.uid === cardId);
     if (!card) return;
 
     if (state.energy < card.cost) {
@@ -134,7 +142,7 @@ export const useBattleStore = create<BattleState>((set, get) => ({
       energy: prev.energy - card.cost,
       cards: {
         ...prev.cards,
-        hand: prev.cards.hand.filter((c) => c.id !== cardId),
+        hand: prev.cards.hand.filter((c) => c.uid !== cardId),
         discard: [...prev.cards.discard, card],
       },
       selectedId: prev.selectedId === cardId ? null : prev.selectedId,

@@ -1,11 +1,11 @@
 import { create } from "zustand";
-import type { Card } from "@/features/battle/utils/types";
+import type { CardInstance } from "@/features/battle/utils/types";
 import { makeStarterDeck } from "@/features/battle/utils/cards";
 
 interface DeckState {
-  collection: Card[];
-  deck: Card[];
-  addCardToDeck: (card: Card) => void;
+  collection: CardInstance[];
+  deck: CardInstance[];
+  addCardToDeck: (card: CardInstance) => void;
   removeCardFromDeck: (cardId: string) => void;
 }
 
