@@ -73,6 +73,7 @@ export const useBattleStore = create<BattleState>((set, get) => ({
     const initialDeck = shuffle(makeStarterDeck());
     const initialHand = initialDeck.splice(0, 4);
     set({
+      phase: "PLAYER_IDLE",
       cards: { deck: initialDeck, hand: initialHand, discard: [] },
       enemyHp: MAX_ENEMY_HP,
       playerHp: MAX_PLAYER_HP,
